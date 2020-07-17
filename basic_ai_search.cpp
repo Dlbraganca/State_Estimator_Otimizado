@@ -1,5 +1,5 @@
 #include "basic_ai_search.h"
-
+//johnsus
 basic_ai_search::basic_ai_search()
 {
 }
