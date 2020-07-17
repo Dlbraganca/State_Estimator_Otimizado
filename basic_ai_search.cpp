@@ -26,6 +26,7 @@ void basic_ai_search::agent_measurement() {
 	std::vector<unsigned int> aux(critical_data.get_meas_location().size(), 0);
 	std::vector<unsigned int> next_state;
 	clock_t tbegin, tend;
+	unsigned int covergenceValue;
 
 	tbegin = clock(); // get  begin time
 
@@ -38,7 +39,14 @@ void basic_ai_search::agent_measurement() {
 			next_state = priority.front();
 			priority.pop();
 			no_of_visited_solutions++;
-			//teste
+			hash_key = hashkey_2(next_state);
+
+			if (visited_states.find(hash_key) != visited_states.end())
+			{
+				if (visited_states.find(hash_key)->second.convergence == 2) {
+					
+				}
+			}
 			if (critical_data.measurement_criticality(next_state) == 0)
 			{
 				for (unsigned int i = next_state.size() - 1; i >= next_state.size(); i--)
@@ -51,6 +59,14 @@ void basic_ai_search::agent_measurement() {
 						if (visited_states.find(hash_key) == visited_states.end())
 						{
 							if (test_ck_4(aux) == 0)
+							{
+								priority.push(aux);
+							}
+						}
+						else 
+						{
+							covergenceValue = visited_states.find(hash_key)->second.convergence;
+							if (covergenceValue == 2)
 							{
 								priority.push(aux);
 							}

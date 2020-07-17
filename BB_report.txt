@@ -1,0 +1,11 @@
+Parametros do problema 
+
+Dimensao:37
+k-limite:8
+k-min:1
+k-max:8
+Criticalidade:measurement
+Tipo de busca:Em largura
+no. solucoes visitadas:1
+tempo decorrido:72
+memória utilizada:5853184

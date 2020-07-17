@@ -1,20 +1,49 @@
-// State_Estimator_Otimizado.cpp : Este arquivo contém a função 'main'. A execução do programa começa e termina ali.
-//
 
 #include <iostream>
+#include <string>
+#include <fstream>
+#include "basic_ai_search.h"
 
-int main()
-{
-    std::cout << "Hello World!\n";
+void main() {
+
+	basic_ai_search search;
+
+	std::ifstream parameters_file("ck_directives.txt", std::ifstream::in); //construtor 
+	std::string param_str;
+
+	if (parameters_file.is_open()) {
+		std::cout << "Parameter file has been successfully opened. Reading search method ...";
+		getline(parameters_file, param_str);
+		parameters_file.close();
+		std::cout << "Done !!!" << std::endl;
+		search.set_param_str(param_str);
+	}
+	else
+	{
+		std::cout << "Unable to open the search parameters file" << std::endl;
+	}
+	if (param_str.compare("bb_bfs") == 0) {
+		unsigned int x = 1;
+		search = basic_ai_search(x, "ck_directives.txt", param_str);
+		if (search.get_crit_type() == "munit")
+		{
+			search.agent_munit();
+		}
+		else if (search.get_crit_type() == "measurement")
+		{
+			search.agent_measurement();
+		}
+	}
+	else if (param_str.compare("bb_dfs") == 0) {
+		unsigned int x = 2;
+		search = basic_ai_search(x, "ck_directives.txt", param_str);
+		if (search.get_crit_type() == "munit")
+		{
+			search.agent_munit();
+		}
+		else if (search.get_crit_type() == "measurement")
+		{
+			search.agent_measurement();
+		}
+	}
 }
-
-// Executar programa: Ctrl + F5 ou Menu Depurar > Iniciar Sem Depuração
-// Depurar programa: F5 ou menu Depurar > Iniciar Depuração
-
-// Dicas para Começar: 
-//   1. Use a janela do Gerenciador de Soluções para adicionar/gerenciar arquivos
-//   2. Use a janela do Team Explorer para conectar-se ao controle do código-fonte
-//   3. Use a janela de Saída para ver mensagens de saída do build e outras mensagens
-//   4. Use a janela Lista de Erros para exibir erros
-//   5. Ir Para o Projeto > Adicionar Novo Item para criar novos arquivos de código, ou Projeto > Adicionar Item Existente para adicionar arquivos de código existentes ao projeto
-//   6. No futuro, para abrir este projeto novamente, vá para Arquivo > Abrir > Projeto e selecione o arquivo. sln
