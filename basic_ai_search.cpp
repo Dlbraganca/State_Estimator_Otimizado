@@ -26,7 +26,7 @@ void basic_ai_search::agent_measurement() {
 	std::vector<unsigned int> aux(critical_data.get_meas_location().size(), 0);
 	std::vector<unsigned int> next_state;
 	clock_t tbegin, tend;
-	unsigned int covergenceValue;
+	unsigned int convergenceValue;
 
 	tbegin = clock(); // get  begin time
 
@@ -40,16 +40,48 @@ void basic_ai_search::agent_measurement() {
 			priority.pop();
 			no_of_visited_solutions++;
 			hash_key = hashkey_2(next_state);
-
+			//printavetor(next_state);
 			if (visited_states.find(hash_key) != visited_states.end())
 			{
-				if (visited_states.find(hash_key)->second.convergence == 2) {
-					
+				convergenceValue = visited_states.find(hash_key)->second.convergence;
+				if (convergenceValue == 3 || convergenceValue == 1)
+				{
+					visited_states.find(hash_key)->second.convergence = 1;
+					lopt.push(next_state);
+				}
+				else
+				{
+					visited_states.find(hash_key)->second.convergence = 0;
+					for (int i = next_state.size() - 1; i >= 0; i--)
+					{
+						aux = next_state;
+						if (aux[i] == 0)
+						{
+							aux[i] = 1;
+							hash_key = hashkey_2(aux);
+							if (visited_states.find(hash_key) == visited_states.end())
+							{
+								if (test_ck_4(aux) == 0)
+								{
+									priority.push(aux);
+								}
+							}
+							else
+							{
+								convergenceValue = visited_states.find(hash_key)->second.convergence;
+								if (convergenceValue == 2)
+								{
+									priority.push(aux);
+								}
+							}
+						}
+						else { break; }
+					}
 				}
 			}
-			if (critical_data.measurement_criticality(next_state) == 0)
+			else if (critical_data.measurement_criticality(next_state) == 0)
 			{
-				for (unsigned int i = next_state.size() - 1; i >= next_state.size(); i--)
+				for (int i = next_state.size() - 1; i >= 0; i--)
 				{
 					aux = next_state;
 					if (aux[i] == 0)
@@ -63,10 +95,10 @@ void basic_ai_search::agent_measurement() {
 								priority.push(aux);
 							}
 						}
-						else 
+						else
 						{
-							covergenceValue = visited_states.find(hash_key)->second.convergence;
-							if (covergenceValue == 2)
+							convergenceValue = visited_states.find(hash_key)->second.convergence;
+							if (convergenceValue == 2)
 							{
 								priority.push(aux);
 							}
@@ -82,9 +114,10 @@ void basic_ai_search::agent_measurement() {
 				x.convergence = 1;
 				hash_key = hashkey_2(next_state);
 				visited_states.emplace(hash_key, x);
-			}
+				lopt.push(next_state);
 			}
 		}
+	}
 	else if (TYPE_SEARCH == 2) // dfs
 	{
 		std::stack<std::vector<unsigned int>> priority;
@@ -239,7 +272,7 @@ void sort_vector(std::vector<unsigned int> x) {
 }
 
 std::string basic_ai_search::hashkey_2(std::vector<unsigned int> x) {
-	std::string aux = 0;
+	std::string aux;
 	for (unsigned int i = 0; i < x.size(); i++)
 	{
 		aux.push_back(x[i]);
@@ -253,12 +286,12 @@ unsigned int basic_ai_search::test_ck_4(std::vector<unsigned int> x) {
 	std::string hash_key;
 	unsigned kmax = ck_search::get_kmax();
 	unsigned teste = 0;
-	state atualState;
-	unsigned covergenceValue;
+	unsigned convergenceValue;
 
 
 	for (unsigned int i = 0; i < x.size(); i++)
 	{
+		state atualState;
 		aux = x;
 		if (aux[i] == 1)
 		{
@@ -282,8 +315,8 @@ unsigned int basic_ai_search::test_ck_4(std::vector<unsigned int> x) {
 				}
 			}
 			else {
-				covergenceValue = visited_states.find(hash_key)->second.convergence;
-				if (covergenceValue == 1 || covergenceValue == 3)
+				convergenceValue = visited_states.find(hash_key)->second.convergence;
+				if (convergenceValue == 1 || convergenceValue == 3)
 				{
 					return 1;
 				}

@@ -10,7 +10,7 @@
 
 struct state {
 	std::vector<unsigned int> positions;
-	bool convergence;
+	unsigned int convergence;
 };
 
 class basic_ai_search : public ck_search {
