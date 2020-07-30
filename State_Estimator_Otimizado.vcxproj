@@ -65,9 +65,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="boost_x64.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="boost_x64_release.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -78,6 +80,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>F:\Boost Library\boost_1_73_0;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\Boost Library\boost_1_73_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -142,17 +146,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="basic_ai_search.cpp" />
-    <ClCompile Include="ck_search.cpp" />
-    <ClCompile Include="criticality.cpp" />
-    <ClCompile Include="State_Estimator_Otimizado.cpp" />
-    <ClCompile Include="width_search.cpp" />
+    <ClCompile Include="source\a_search.cpp" />
+    <ClCompile Include="source\basic_ai_search.cpp" />
+    <ClCompile Include="source\bfs_search.cpp" />
+    <ClCompile Include="source\ck_search.cpp" />
+    <ClCompile Include="source\criticality.cpp" />
+    <ClCompile Include="source\dfs_search.cpp" />
+    <ClCompile Include="source\ids_search.cpp" />
+    <ClCompile Include="source\memory_methods.cpp" />
+    <ClCompile Include="source\State_Estimator_Otimizado.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="basic_ai_search.h" />
-    <ClInclude Include="ck_search.h" />
-    <ClInclude Include="criticality.h" />
-    <ClInclude Include="width_search.h" />
+    <ClInclude Include="headers\a_search.h" />
+    <ClInclude Include="headers\basic_ai_search.h" />
+    <ClInclude Include="headers\bfs_search.h" />
+    <ClInclude Include="headers\ck_search.h" />
+    <ClInclude Include="headers\class_state.h" />
+    <ClInclude Include="headers\criticality.h" />
+    <ClInclude Include="headers\dfs_search.h" />
+    <ClInclude Include="headers\ids_search.h" />
+    <ClInclude Include="headers\memory_methods.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

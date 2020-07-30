@@ -20,6 +20,7 @@
 #include <fstream>
 #include <string>
 #include <cstdio>
+#include"memory_methods.h"
 
 
 
@@ -34,6 +35,8 @@ protected:
 	std::vector<unsigned int> T;
 	std::stack<std::vector<unsigned int>> lopt, lopt_buff;
 	criticality critical_data;
+	std::string param_str;
+	unsigned int no_of_visited_solutions = 0;
 public:
 	// methods
 	ck_search();
@@ -57,15 +60,15 @@ public:
 	void set_search_method(std::string SEARCH_METHOD) { search_method = SEARCH_METHOD; };
 	criticality get_critical_data() { return critical_data; };
 
-	virtual void save_state() {/*not implemented*/ };
-	virtual void load_state() {/*not implemented*/ };
-	virtual void report() {/*not implemented*/ };
-	virtual void search() {/*not implemented*/ };
+	//virtual void save_state() {/*not implemented*/ };
+	//virtual void load_state() {/*not implemented*/ };
+	//virtual void report() {/*not implemented*/ };
+	//virtual void search() {/*not implemented*/ };
 
-	//void save_state() {/*not implemented*/ };
-	//void load_state() {/*not implemented*/ };
-	//void report() {/*not implemented*/ };
-	//void search() {/*not implemented*/ };
+	////void save_state() {/*not implemented*/ };
+	////void load_state() {/*not implemented*/ };
+	////void report() {/*not implemented*/ };
+	////void search() {/*not implemented*/ };
 
 	std::stack<std::vector<unsigned int>> get_lopt_buffer() { return lopt_buff; }
 };
