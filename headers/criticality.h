@@ -28,10 +28,10 @@ public:
 	//criticality(const criticality&) =0;
 	arma::mat read_matlab_matrix(const char*);
 	unsigned int  eval_criticality(std::vector<unsigned int>& x, std::string&);
-	unsigned int  measurement_criticality(std::vector<unsigned int>& x);
+	unsigned int  measurement_criticality(std::vector<unsigned int> x);
 	unsigned int  top_branch_criticality(std::vector<unsigned int>& x);
 	unsigned int  bd_branch_criticality(std::vector<unsigned int>& x);
-	unsigned int  munit_criticality(std::vector<unsigned int>& x);
+	unsigned int  munit_criticality(std::vector<unsigned int> x);
 	unsigned int  complete_munit_criticality(std::vector<unsigned int>& x);
 	unsigned int  munit_observability_analysis(std::vector<unsigned int> y, arma::mat A);
 	unsigned int  observability_analysis(arma::mat, double tol = 1e-10);

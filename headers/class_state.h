@@ -1,18 +1,32 @@
 #include<vector>
+#include<string>
 
 class state {
 
 protected:
 	std::vector<unsigned int> CKLIST;
 	unsigned int HEURISTIC;
-	unsigned int DEEP;
+	unsigned int DEEPTH;
 public:
 	state() {};
 	~state() {};
-	state(std::vector<unsigned int> cklist) {
+	state(std::vector<unsigned int> cklist, std::string param_str) {
 		CKLIST = cklist;
-		DEEP = set_depth(CKLIST);
-		HEURISTIC = 0;
+		if (param_str.compare("bb_ids"))
+		{
+			DEEPTH = set_depth(CKLIST);
+		}
+		else if (param_str.compare("bb_a*s"))
+		{
+			DEEPTH = set_depth(CKLIST);
+			HEURISTIC = DEEPTH + heuristic();
+		}
+	}
+	std::vector<unsigned int> get_cklist() {
+		return CKLIST;
+	}
+	unsigned int get_heuristic() {
+		return HEURISTIC;
 	}
 private:
 	unsigned int set_depth(std::vector<unsigned int> cklist) {
@@ -26,12 +40,8 @@ private:
 		}
 		return count;;
 	}
-	void heuristic();
+	unsigned int heuristic() {
+		return 0;
+	}
 
-	std::vector<unsigned int> get_cklist() {
-		return CKLIST;
-	}
-	unsigned int get_heuristic() {
-		return HEURISTIC;
-	}
 };

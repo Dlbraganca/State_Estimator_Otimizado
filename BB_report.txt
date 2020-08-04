@@ -4,8 +4,8 @@ Dimensao:37
 k-limite:8
 k-min:1
 k-max:8
-Criticalidade:measurement
-Tipo de busca:
-no. solucoes visitadas:146782
-tempo decorrido:512170
-memória utilizada:31092736
+Criticalidade:munit
+Tipo de busca:bb_bfs
+no. solucoes visitadas:133
+tempo decorrido:120
+memória utilizada:5980160

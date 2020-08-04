@@ -21,6 +21,7 @@
 #include <string>
 #include <cstdio>
 #include"memory_methods.h"
+#include"class_state.h"
 
 
 

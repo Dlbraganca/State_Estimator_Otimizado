@@ -1,14 +1,14 @@
 
 #include"ck_search.h"
-#include<unordered_map>
 #include<vector>
 #include"windows.h"
 #include"psapi.h"
 
 
 class bfs_search : public ck_search {
+
 protected:
-	std::unordered_map<std::string, state> visited_states;
+	std::unordered_map<std::string, int> visited_states;
 	ck_search mu_file;
 	unsigned int TYPE_SEARCH;
 	unsigned int no_of_visited_solutions = 0;

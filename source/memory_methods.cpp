@@ -2,6 +2,7 @@
 
 
 
+
 std::string hashkey(std::vector<unsigned int> x) {
 	std::string aux;
 	for (unsigned int i = 0; i < x.size(); i++)

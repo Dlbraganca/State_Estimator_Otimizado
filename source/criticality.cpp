@@ -185,7 +185,7 @@ unsigned int  criticality::eval_criticality(std::vector<unsigned int>& x, std::s
 	return f;
 }
 
-unsigned int  criticality::measurement_criticality(std::vector<unsigned int>& x)
+unsigned int  criticality::measurement_criticality(std::vector<unsigned int> x)
 {
 	unsigned int nrows, ncolumns = H.n_cols, row, row2, col;
 	arma::mat H2, G2, Q, U;
@@ -228,7 +228,7 @@ unsigned int  criticality::top_branch_criticality(std::vector<unsigned int>& x)
 	return 0;
 }
 
-unsigned int  criticality::munit_criticality(std::vector<unsigned int>& x) {
+unsigned int  criticality::munit_criticality(std::vector<unsigned int> x) {
 
 	unsigned int nrows = 0, ncolumns = H.n_cols, row, row2, col;
 	arma::mat H2, G2, Q, U;

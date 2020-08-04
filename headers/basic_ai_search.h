@@ -15,6 +15,7 @@
 class basic_ai_search {
 protected:
 	//ck_search mu_file;
+	std::string PARAM_STR;
 public:
 	//methods
 	basic_ai_search();
@@ -26,6 +27,7 @@ public:
 	//void agent_measurement();
 	//void agent_munit();
 	void get_search_type(const char*, std::string&);
+	std::string get_type_search();
 	//std::string hashkey_2(std::vector<unsigned int>);*/
 	//::vector<unsigned int> conv_measures(std::vector<unsigned int>, unsigned int);
 	//unsigned int test_ck_4(std::vector<unsigned int>);

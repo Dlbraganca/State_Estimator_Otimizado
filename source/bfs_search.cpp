@@ -11,6 +11,7 @@ bfs_search::bfs_search(const char*, criticality&)
 
 bfs_search::bfs_search(const char* CK_PARAM_FILE, std::string PARAM_STR) : ck_search(CK_PARAM_FILE)
 {
+	param_str = PARAM_STR;
 }
 
 bfs_search::bfs_search(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, unsigned int DIM, std::string CRIT_TYPE, criticality&)
@@ -20,108 +21,127 @@ bfs_search::bfs_search(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, 
 void bfs_search::agent_measurement() {
 
 	std::string hash_key;
-	std::vector<unsigned int> aux(critical_data.get_meas_location().size(), 0);
-	std::vector<unsigned int> next_state;
+	std::vector<unsigned int> aux_vector(critical_data.get_meas_location().size(), 0);
+	state aux(aux_vector, param_str);
+	state next_state;
 	clock_t tbegin, tend, tfreememoryBegin, tmaxFreememory = 100000;
 	unsigned int convergenceValue;
+	std::queue <state> priority;
 
 	tbegin = clock(); // get  begin time
 	tfreememoryBegin = clock();
 
-		std::stack <std::vector<unsigned int>> priority;
-		priority.push(aux);
-		while (!priority.empty())
+	priority.push(aux);
+
+	while (!priority.empty()) //loop ate a pilha ficar vazia
+	{
+		next_state = priority.front(); //retira o primeiro da pilha e armazena em uma nova variavel
+		priority.pop(); // deleta o primeiro da pilha
+		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
+		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
+		if (visited_states.find(hash_key) != visited_states.end()) // caso o estado esteja na tabela hash
 		{
-			next_state = priority.top();
-			priority.pop();
-			no_of_visited_solutions++;
-			hash_key = hashkey(next_state);
-			//printavetor(next_state);
-			if (visited_states.find(hash_key) != visited_states.end())
+			convergenceValue = visited_states.find(hash_key)->second;  //retorna o valor de convergencia e armazena em uma variavel
+			if (convergenceValue == 3) // valores de convergencia (3-> nao observavel nao visitado) (1-> visitado e nao observavel)
 			{
-				convergenceValue = visited_states.find(hash_key)->second.convergence;
-				if (convergenceValue == 3 || convergenceValue == 1)
-				{
-					visited_states.find(hash_key)->second.convergence = 1;
-					lopt.push(next_state);
-				}
-				else
-				{
-					visited_states.find(hash_key)->second.convergence = 0;
-					for (int i = next_state.size() - 1; i >= 0; i--)
-					{
-						aux = next_state;
-						if (aux[i] == 0)
-						{
-							aux[i] = 1;
-							hash_key = hashkey(aux);
-							if (visited_states.find(hash_key) == visited_states.end())
-							{
-								if (test_ck_4(aux) == 0)
-								{
-									priority.push(aux);
-								}
-							}
-							else
-							{
-								convergenceValue = visited_states.find(hash_key)->second.convergence;
-								if (convergenceValue == 2)
-								{
-									priority.push(aux);
-								}
-							}
-						}
-						else { break; }
-					}
-				}
+				visited_states.find(hash_key)->second = 1;  // muda o valor de convergencia para "1"
+				lopt.push(next_state.get_cklist());  // armazena na pilha de resultados
 			}
-			else if (critical_data.measurement_criticality(next_state) == 0)
+			else
 			{
-				for (int i = next_state.size() - 1; i >= 0; i--)
+				visited_states.find(hash_key)->second = 0; // caso encontre na tabela e é observavel - seta o valor para 0 (0-> visitado e observavel)
+				for (int i = next_state.get_cklist().size() - 1; i >= 0; i--) //expansao do estado
 				{
-					aux = next_state;
-					if (aux[i] == 0)
+					aux_vector = next_state.get_cklist(); // estado a ser expandido armazenado em uma nova variavel
+					if (aux_vector[i] == 0)
 					{
-						aux[i] = 1;
-						hash_key = hashkey(aux);
-						if (visited_states.find(hash_key) == visited_states.end())
-						{
-							if (test_ck_4(aux) == 0)
-							{
-								priority.push(aux);
+						aux_vector[i] = 1; //transforma 0 em 1
+						hash_key = hashkey(aux_vector); //calcula a hash do estado criado
+						if (visited_states.find(hash_key) == visited_states.end()) //procura na tabela hash
+						{//caso nao encontrado
+							if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
+							{//caso nao tenha tupla critica
+								state aux_state(aux_vector, param_str);
+								priority.push(aux_state); // armazena na fila de prioridade
 							}
 						}
 						else
-						{
-							convergenceValue = visited_states.find(hash_key)->second.convergence;
-							if (convergenceValue == 2)
+						{// caso encontre na tabela hash
+							convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
+							if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 							{
-								priority.push(aux);
+								state aux_state(aux_vector, param_str);
+								priority.push(aux_state); // armazena na fila de prioridade
+							}
+							else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
+							{
+								if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
+								{//caso nao tenha tupla critica
+									state aux_state(aux_vector, param_str);
+									priority.push(aux_state); // armazena na fila de prioridade
+								}
 							}
 						}
 					}
 					else { break; }
 				}
 			}
-			else
+		}
+		else if (critical_data.measurement_criticality(next_state.get_cklist()) == 0)
+		{//caso nao esteja na tabela hash e seja observavel
+			for (int i = next_state.get_cklist().size() - 1; i >= 0; i--)//expansao do estado
 			{
-				state x;
-				x.positions = next_state;
-				x.convergence = 1;
-				hash_key = hashkey(next_state);
-				visited_states.emplace(hash_key, x);
-				lopt.push(next_state);
+				aux_vector = next_state.get_cklist(); // estado a ser expandido armazenado em uma nova variavel
+				if (aux_vector[i] == 0)
+				{
+					aux_vector[i] = 1;
+					hash_key = hashkey(aux_vector); //calcula a hash do estado criado
+					if (visited_states.find(hash_key) == visited_states.end())
+					{
+						if (test_ck_4(aux_vector) == 0)
+						{
+							state aux_state(aux_vector, param_str);
+							priority.push(aux_state); // armazena na fila de prioridad
+						}
+					}
+					else
+					{// caso encontre na tabela hash
+						convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
+						if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
+						{
+							state aux_state(aux_vector, param_str);
+							priority.push(aux_state); // armazena na fila de prioridade
+						}
+						else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
+						{
+							if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
+							{//caso nao tenha tupla critica
+								state aux_state(aux_vector, param_str);
+								priority.push(aux_state); // armazena na fila de prioridade
+							}
+						}
+					}
+				}
+				else { break; }
 			}
-			if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
-				std::cout << "Clearing memory...";
-				free_memory(next_state); // save state
-				std::cout << "done!!!" << std::endl;
-				//std::cout << "Saving states...";
-				//temporary_report(); // saving states
-				//std::cout << "done!!!" << std::endl;
-				tfreememoryBegin = clock();
-			}
-		
+		}
+		else
+		{ //caso nao esteja na tabela hash e nao seja observavel
+			//x.positions = next_state;
+			hash_key = hashkey(next_state.get_cklist());
+			visited_states.emplace(hash_key, 1);
+			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
+		}
+		if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
+			std::cout << "Clearing memory...";
+			free_memory(next_state.get_cklist()); // save state
+			std::cout << "done!!!" << std::endl;
+			//std::cout << "Saving states...";
+			//temporary_report(); // saving states
+			//std::cout << "done!!!" << std::endl;
+			tfreememoryBegin = clock();
+		}
+
 	}
 
 	//time(&tend);// get total time
@@ -132,49 +152,129 @@ void bfs_search::agent_measurement() {
 void bfs_search::agent_munit() {
 
 	std::string hash_key;
-	std::vector<unsigned int> aux(critical_data.get_mu_location().size(), 0);
-	std::vector<unsigned int> next_state;
-	time_t tbegin, tend;
+	std::vector<unsigned int> aux_vector(critical_data.get_mu_location().size(), 0);
+	state aux(aux_vector, param_str);
+	state next_state;
+	clock_t tbegin, tend, tfreememoryBegin, tmaxFreememory = 100000;
+	unsigned int convergenceValue;
+	std::queue <state> priority;
 
-	tbegin = clock();
-	if (TYPE_SEARCH == 1) // width search
+	tbegin = clock(); // get  begin time
+	tfreememoryBegin = clock();
+	priority.push(aux);
+
+	while (!priority.empty()) //loop ate a pilha ficar vazia
 	{
-		std::queue <std::vector<unsigned int>> priority;
-		priority.push(aux);
-		while (priority.empty() == false)
+		next_state = priority.front(); //retira o primeiro da pilha e armazena em uma nova variavel
+		priority.pop(); // deleta o primeiro da pilha
+		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
+		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
+		if (visited_states.find(hash_key) != visited_states.end()) // caso o estado esteja na tabela hash
 		{
-			no_of_visited_solutions++;
-			next_state = priority.front();
-			priority.pop();
-
-			if (critical_data.munit_criticality(next_state) == 0)
+			convergenceValue = visited_states.find(hash_key)->second;  //retorna o valor de convergencia e armazena em uma variavel
+			if (convergenceValue == 3) // valores de convergencia (3-> nao observavel nao visitado) (1-> visitado e nao observavel)
 			{
-				for (int i = aux.size() - 1; i >= 0; i--)
+				visited_states.find(hash_key)->second = 1;  // muda o valor de convergencia para "1"
+				lopt.push(next_state.get_cklist());  // armazena na pilha de resultados
+			}
+			else
+			{
+				visited_states.find(hash_key)->second = 0; // caso encontre na tabela e é observavel - seta o valor para 0 (0-> visitado e observavel)
+				for (int i = next_state.get_cklist().size() - 1; i >= 0; i--) //expansao do estado
 				{
-					aux = next_state;
-					if (aux[i] == 0)
+					aux_vector = next_state.get_cklist(); // estado a ser expandido armazenado em uma nova variavel
+					if (aux_vector[i] == 0)
 					{
-						aux[i] = 1;
-						hash_key = hashkey(aux);
-						if (visited_states.find(hash_key) == visited_states.end())
-						{
-							if (test_ck_munit(aux) == 0)
+						aux_vector[i] = 1; //transforma 0 em 1
+						hash_key = hashkey(aux_vector); //calcula a hash do estado criado
+						if (visited_states.find(hash_key) == visited_states.end()) //procura na tabela hash
+						{//caso nao encontrado
+							if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
+							{//caso nao tenha tupla critica
+								state aux_state(aux_vector, param_str);
+								priority.push(aux_state); // armazena na fila de prioridade
+							}
+						}
+						else
+						{// caso encontre na tabela hash
+							convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
+							if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 							{
-								//visited_states[hash_key] = true;
-								priority.push(aux);
+								state aux_state(aux_vector, param_str);
+								priority.push(aux_state); // armazena na fila de prioridade
+							}
+							else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
+							{
+								if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
+								{//caso nao tenha tupla critica
+									state aux_state(aux_vector, param_str);
+									priority.push(aux_state); // armazena na fila de prioridade
+								}
 							}
 						}
 					}
 					else { break; }
 				}
 			}
-			else
+		}
+		else if (critical_data.munit_criticality(next_state.get_cklist()) == 0)
+		{//caso nao esteja na tabela hash e seja observavel
+			for (int i = next_state.get_cklist().size() - 1; i >= 0; i--)//expansao do estado
 			{
-				lopt.push(next_state);
+				aux_vector = next_state.get_cklist(); // estado a ser expandido armazenado em uma nova variavel
+				if (aux_vector[i] == 0)
+				{
+					aux_vector[i] = 1;
+					hash_key = hashkey(aux_vector); //calcula a hash do estado criado
+					if (visited_states.find(hash_key) == visited_states.end())
+					{
+						if (test_ck_munit(aux_vector) == 0)
+						{
+							state aux_state(aux_vector, param_str);
+							priority.push(aux_state); // armazena na fila de prioridad
+						}
+					}
+					else
+					{// caso encontre na tabela hash
+						convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
+						if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
+						{
+							state aux_state(aux_vector, param_str);
+							priority.push(aux_state); // armazena na fila de prioridade
+						}
+						else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
+						{
+							if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
+							{//caso nao tenha tupla critica
+								state aux_state(aux_vector, param_str);
+								priority.push(aux_state); // armazena na fila de prioridade
+							}
+						}
+					}
+				}
+				else { break; }
 			}
 		}
+		else
+		{ //caso nao esteja na tabela hash e nao seja observavel
+			//x.positions = next_state;
+			hash_key = hashkey(next_state.get_cklist());
+			visited_states.emplace(hash_key, 1);
+			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
+		}
+		if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
+			std::cout << "Clearing memory...";
+			free_memory(next_state.get_cklist()); // save state
+			std::cout << "done!!!" << std::endl;
+			//std::cout << "Saving states...";
+			//temporary_report(); // saving states
+			//std::cout << "done!!!" << std::endl;
+			tfreememoryBegin = clock();
+		}
+
 	}
-	
+
+	//time(&tend);// get total time
 	elapsed_time = difftime(tend = clock(), tbegin);
 	report();
 }
@@ -190,7 +290,6 @@ unsigned int bfs_search::test_ck_4(std::vector<unsigned int> x) {
 
 	for (unsigned int i = 0; i < x.size(); i++)
 	{
-		state atualState;
 		aux = x;
 		if (aux[i] == 1)
 		{
@@ -200,21 +299,19 @@ unsigned int bfs_search::test_ck_4(std::vector<unsigned int> x) {
 			if (visited_states.find(hash_key) == visited_states.end())
 			{
 				if (critical_data.measurement_criticality(aux) == 1) //teste de observabilidade
-				{
-					atualState.convergence = 3;
-					atualState.positions = aux;
-					visited_states.emplace(hash_key, atualState);
+				{//nao observavel
+					//atualState.positions = aux;
+					visited_states.emplace(hash_key, 3);
 					return 1;
 				}
 				else
-				{
-					atualState.convergence = 2;
-					atualState.positions = aux;
-					visited_states.emplace(hash_key, atualState);
+				{//observavel
+					//atualState.positions = aux;
+					visited_states.emplace(hash_key, 2);
 				}
 			}
 			else {
-				convergenceValue = visited_states.find(hash_key)->second.convergence;
+				convergenceValue = visited_states.find(hash_key)->second;
 				if (convergenceValue == 1 || convergenceValue == 3)
 				{
 					return 1;
@@ -229,21 +326,9 @@ unsigned int bfs_search::test_ck_munit(std::vector<unsigned int> x) {
 
 	std::vector<unsigned int> aux;
 	std::string hash_key;
-	unsigned count = 0;
-	unsigned kmax = ck_search::get_kmax();
+	unsigned teste = 0;
+	unsigned convergenceValue;
 
-
-	for (unsigned int i = 0; i < x.size(); i++)
-	{
-		if (x[i] == 1)
-		{
-			count++;
-		}
-		if (count > kmax)
-		{
-			return 1;
-		}
-	}
 
 	for (unsigned int i = 0; i < x.size(); i++)
 	{
@@ -252,9 +337,27 @@ unsigned int bfs_search::test_ck_munit(std::vector<unsigned int> x) {
 		{
 			//count++;
 			aux[i] = 0;
-			if (critical_data.munit_criticality(aux) == 1)
+			hash_key = hashkey(aux);
+			if (visited_states.find(hash_key) == visited_states.end())
 			{
-				return 1;
+				if (critical_data.munit_criticality(aux) == 1) //teste de observabilidade
+				{//nao observavel
+					//atualState.positions = aux;
+					visited_states.emplace(hash_key, 3);
+					return 1;
+				}
+				else
+				{//observavel
+					//atualState.positions = aux;
+					visited_states.emplace(hash_key, 2);
+				}
+			}
+			else {
+				convergenceValue = visited_states.find(hash_key)->second;
+				if (convergenceValue == 1 || convergenceValue == 3)
+				{
+					return 1;
+				}
 			}
 		}
 	}
