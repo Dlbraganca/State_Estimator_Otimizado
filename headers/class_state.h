@@ -5,43 +5,56 @@ class state {
 
 protected:
 	std::vector<unsigned int> CKLIST;
-	unsigned int HEURISTIC;
-	unsigned int DEEPTH;
+	double DEEPTH;
+	double HEURISTIC = 0;
+	criticality CRITICAL_DATA;
 public:
 	state() {};
 	~state() {};
 	state(std::vector<unsigned int> cklist, std::string param_str) {
 		CKLIST = cklist;
-		if (param_str.compare("bb_ids"))
+	}
+	state(std::vector<unsigned int> cklist, criticality& critical_data,std::string x) {
+		CKLIST = cklist;
+		CRITICAL_DATA = critical_data;
+		DEEPTH = set_depth(CKLIST);
+		if (x == "measurement")
 		{
-			DEEPTH = set_depth(CKLIST);
+			HEURISTIC = measurement_heuristic();
 		}
-		else if (param_str.compare("bb_a*s"))
+		else
 		{
-			DEEPTH = set_depth(CKLIST);
-			HEURISTIC = DEEPTH + heuristic();
+			HEURISTIC = munit_heuristic();
 		}
+		HEURISTIC = HEURISTIC + DEEPTH;
 	}
 	std::vector<unsigned int> get_cklist() {
 		return CKLIST;
 	}
-	unsigned int get_heuristic() {
+	double get_heuristic() {
 		return HEURISTIC;
 	}
 private:
-	unsigned int set_depth(std::vector<unsigned int> cklist) {
+	double set_depth(std::vector<unsigned int> cklist) {
 		unsigned int count = 0;
 		for (size_t i = 0; i < cklist.size(); i++)
 		{
-			if (cklist[i] == 1)
+			if (cklist[i] == 0)
 			{
 				count++;
 			}
 		}
-		return count;;
+		return 1/count;
+		//return count;
 	}
-	unsigned int heuristic() {
-		return 0;
-	}
+	double measurement_heuristic() {
 
+		CRITICAL_DATA.measurement_criticality(CKLIST);
+		return 1/CRITICAL_DATA.get_det();
+	}
+	double munit_heuristic() {
+
+		CRITICAL_DATA.munit_criticality(CKLIST);
+		return 1 / CRITICAL_DATA.get_det();
+	}
 };

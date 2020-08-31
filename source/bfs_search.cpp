@@ -35,6 +35,7 @@ void bfs_search::agent_measurement() {
 
 	while (!priority.empty()) //loop ate a pilha ficar vazia
 	{
+		//printavetor(next_state.get_cklist());
 		next_state = priority.front(); //retira o primeiro da pilha e armazena em uma nova variavel
 		priority.pop(); // deleta o primeiro da pilha
 		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
@@ -129,18 +130,22 @@ void bfs_search::agent_measurement() {
 		{ //caso nao esteja na tabela hash e nao seja observavel
 			//x.positions = next_state;
 			hash_key = hashkey(next_state.get_cklist());
-			visited_states.emplace(hash_key, 1);
+			visited_states.emplace(hash_key, 1);;
 			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
 		}
-		if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
-			std::cout << "Clearing memory...";
-			free_memory(next_state.get_cklist()); // save state
-			std::cout << "done!!!" << std::endl;
-			//std::cout << "Saving states...";
-			//temporary_report(); // saving states
-			//std::cout << "done!!!" << std::endl;
-			tfreememoryBegin = clock();
-		}
+		//if (visited_states.size() > 10000000000000000)
+		//{
+		//	visited_states.clear();
+		//}
+		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
+		//	std::cout << "Clearing memory...";
+		//	free_memory(next_state.get_cklist()); // save state
+		//	std::cout << "done!!!" << std::endl;
+		//	//std::cout << "Saving states...";
+		//	//temporary_report(); // saving states
+		//	//std::cout << "done!!!" << std::endl;
+		//	tfreememoryBegin = clock();
+		//}
 
 	}
 
@@ -165,6 +170,7 @@ void bfs_search::agent_munit() {
 
 	while (!priority.empty()) //loop ate a pilha ficar vazia
 	{
+		//printavetor(next_state.get_cklist());
 		next_state = priority.front(); //retira o primeiro da pilha e armazena em uma nova variavel
 		priority.pop(); // deleta o primeiro da pilha
 		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
@@ -262,15 +268,19 @@ void bfs_search::agent_munit() {
 			visited_states.emplace(hash_key, 1);
 			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
 		}
-		if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
-			std::cout << "Clearing memory...";
-			free_memory(next_state.get_cklist()); // save state
-			std::cout << "done!!!" << std::endl;
-			//std::cout << "Saving states...";
-			//temporary_report(); // saving states
-			//std::cout << "done!!!" << std::endl;
-			tfreememoryBegin = clock();
-		}
+		//if (visited_states.size() > 100000)
+		//{
+		//	visited_states.clear();
+		//}
+		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
+		//	std::cout << "Clearing memory...";
+		//	free_memory(next_state.get_cklist()); // save state
+		//	std::cout << "done!!!" << std::endl;
+		//	//std::cout << "Saving states...";
+		//	//temporary_report(); // saving states
+		//	//std::cout << "done!!!" << std::endl;
+		//	tfreememoryBegin = clock();
+		//}
 
 	}
 

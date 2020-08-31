@@ -1,11 +1,11 @@
 Parametros do problema 
 
-Dimensao:37
-k-limite:8
+Dimensao:21
+k-limite:21
 k-min:1
-k-max:8
+k-max:21
 Criticalidade:munit
-Tipo de busca:bb_bfs
-no. solucoes visitadas:133
-tempo decorrido:120
-memória utilizada:5980160
+Tipo de busca:
+no. solucoes visitadas:2461
+tempo decorrido:4150
+memória utilizada:9134080

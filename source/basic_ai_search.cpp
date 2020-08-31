@@ -53,21 +53,21 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 			search.agent_measurement(); //caso seja a busca pela medidas
 		}
 	}
-	//else if (param_str.compare("bb_ids") == 0) {  // caso a busca seja em profundidade
+	else if (param_str.compare("bb_ids") == 0) {  // caso a busca seja em profundidade
 
-	//	PARAM_STR = "Em Profundidade Iterativa";  // muda a variavel para o arquivo final 
+		PARAM_STR = "Em Profundidade Iterativa";  // muda a variavel para o arquivo final 
 
-	//	ids_search search = ids_search(ck_param_file, param_str); //construtor da busca em profundidade
+		ids_search search = ids_search(ck_param_file, param_str); //construtor da busca em profundidade
 
-	//	if (search.get_crit_type() == "munit")
-	//	{
-	//		search.agent_munit(); //caso seja a busca pela MU
-	//	}
-	//	else if (search.get_crit_type() == "measurement")
-	//	{
-	//		search.agent_measurement(); //caso seja a busca pela medidas
-	//	}
-	//}
+		if (search.get_crit_type() == "munit")
+		{
+			search.agent_munit(); //caso seja a busca pela MU
+		}
+		else if (search.get_crit_type() == "measurement")
+		{
+			search.agent_measurement(); //caso seja a busca pela medidas
+		}
+	}
 	else if (param_str.compare("bb_a*s") == 0) {  // caso a busca seja em profundidade
 
 		PARAM_STR = "A*";  // muda a variavel para o arquivo final 

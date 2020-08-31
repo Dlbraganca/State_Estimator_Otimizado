@@ -36,6 +36,7 @@ void dfs_search::agent_measurement() {
 	while (!priority.empty()) //loop ate a pilha ficar vazia
 	{
 		next_state = priority.top(); //retira o primeiro da pilha e armazena em uma nova variavel
+		/*printavetor(next_state.get_cklist());*/
 		priority.pop(); // deleta o primeiro da pilha
 		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
 		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
@@ -46,6 +47,8 @@ void dfs_search::agent_measurement() {
 			{
 				visited_states.find(hash_key)->second = 1;  // muda o valor de convergencia para "1"
 				lopt.push(next_state.get_cklist());  // armazena na pilha de resultados
+				//visited_states.emplace(hash_key, 1);
+				/*std::cout << "critica------";*/
 			}
 			else
 			{
@@ -130,17 +133,23 @@ void dfs_search::agent_measurement() {
 			//x.positions = next_state;
 			hash_key = hashkey(next_state.get_cklist()); 
 			visited_states.emplace(hash_key, 1);
+			/*std::cout << "critica------";
+			printavetor(next_state.get_cklist());*/
 			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
 		}
-		if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
-			std::cout << "Clearing memory...";
-			free_memory(next_state.get_cklist()); // save state
-			std::cout << "done!!!" << std::endl;
-			//std::cout << "Saving states...";
-			//temporary_report(); // saving states
-			//std::cout << "done!!!" << std::endl;
-			tfreememoryBegin = clock();
-		}
+		//if (visited_states.size() > 0)
+		//{
+		//	visited_states.clear();
+		//}
+		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
+		//	std::cout << "Clearing memory...";
+		//	free_memory(next_state.get_cklist()); // save state
+		//	std::cout << "done!!!" << std::endl;
+		//	//std::cout << "Saving states...";
+		//	//temporary_report(); // saving states
+		//	//std::cout << "done!!!" << std::endl;
+		//	tfreememoryBegin = clock();
+		//}
 
 	}
 
@@ -161,11 +170,13 @@ void dfs_search::agent_munit() {
 
 	tbegin = clock(); // get  begin time
 	tfreememoryBegin = clock();
+	priority.push(aux);
 
 	while (!priority.empty()) //loop ate a pilha ficar vazia
 	{
 		next_state = priority.top(); //retira o primeiro da pilha e armazena em uma nova variavel
 		priority.pop(); // deleta o primeiro da pilha
+		//printavetor(next_state.get_cklist());
 		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
 		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
 		if (visited_states.find(hash_key) != visited_states.end()) // caso o estado esteja na tabela hash
@@ -175,6 +186,8 @@ void dfs_search::agent_munit() {
 			{
 				visited_states.find(hash_key)->second = 1;  // muda o valor de convergencia para "1"
 				lopt.push(next_state.get_cklist());  // armazena na pilha de resultados
+				visited_states.emplace(hash_key, 1);
+				/*std::cout << "critica------";*/
 			}
 			else
 			{
@@ -260,16 +273,22 @@ void dfs_search::agent_munit() {
 			hash_key = hashkey(next_state.get_cklist());
 			visited_states.emplace(hash_key, 1);
 			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
+			visited_states.emplace(hash_key, 1);
+			/*std::cout << "critica------";*/
 		}
-		if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
-			std::cout << "Clearing memory...";
-			free_memory(next_state.get_cklist()); // save state
-			std::cout << "done!!!" << std::endl;
-			//std::cout << "Saving states...";
-			//temporary_report(); // saving states
-			//std::cout << "done!!!" << std::endl;
-			tfreememoryBegin = clock();
-		}
+		//if (visited_states.size() > 100000)
+		//{
+		//	visited_states.clear();
+		//}
+		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
+		//	std::cout << "Clearing memory...";
+		//	free_memory(next_state.get_cklist()); // save state
+		//	std::cout << "done!!!" << std::endl;
+		//	//std::cout << "Saving states...";
+		//	//temporary_report(); // saving states
+		//	//std::cout << "done!!!" << std::endl;
+		//	tfreememoryBegin = clock();
+		//}
 
 	}
 

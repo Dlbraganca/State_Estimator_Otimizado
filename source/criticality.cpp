@@ -188,7 +188,7 @@ unsigned int  criticality::eval_criticality(std::vector<unsigned int>& x, std::s
 unsigned int  criticality::measurement_criticality(std::vector<unsigned int> x)
 {
 	unsigned int nrows, ncolumns = H.n_cols, row, row2, col;
-	arma::mat H2, G2, Q, U;
+	arma::mat H2, G2, Q;
 	arma::vec d;
 	arma::uvec non_zeros;
 	// determining the number of rows
@@ -231,7 +231,7 @@ unsigned int  criticality::top_branch_criticality(std::vector<unsigned int>& x)
 unsigned int  criticality::munit_criticality(std::vector<unsigned int> x) {
 
 	unsigned int nrows = 0, ncolumns = H.n_cols, row, row2, col;
-	arma::mat H2, G2, Q, U;
+	arma::mat H2, G2, Q;
 	arma::vec d;
 	arma::uvec non_zeros;
 	std::vector<unsigned int> y(H.n_rows, 0); //vector of available measurements
@@ -293,7 +293,7 @@ unsigned int  criticality::bd_branch_criticality(std::vector<unsigned int>& x)
 }
 
 unsigned int criticality::observability_analysis(arma::mat H, double tol) {
-	arma::mat  G, Q, U;
+	arma::mat  G, Q;
 	//arma::mat  G, L, D, A;
 	arma::vec d;
 	arma::uvec non_zeros;
@@ -306,6 +306,7 @@ unsigned int criticality::observability_analysis(arma::mat H, double tol) {
 	arma::qr_econ(Q, U, G); // QR decomposition of G2
 	d = arma::diagvec(U); // extracts main diagonal of triangular matrix U
 	//d.t().print(gain_cpp,"d:");gain_cpp<<arma::rank(G)<<arma::cond(G)<<std::endl;
+	//det = arma::det(U);
 	non_zeros = arma::find(arma::abs(d) > tol);
 	if (non_zeros.size() < H.n_cols) {  //if the number of non zero pivots in U is lesser than number of states, system is unobservable
 		return 1;
@@ -375,3 +376,13 @@ unsigned int  criticality::munit_observability_analysis(std::vector<unsigned int
 	*/
 	return 0;
 }
+//void printa_matriz(std::vector<std::vector<unsigned int>>x) {
+//	for (size_t i = 0; i < x.size(); i++)
+//	{
+//		for (size_t j = 0; j < x[i].size(); j++)
+//		{
+//			std::cout << x[i][j] << " ";
+//		}
+//		std::cout << "\n";
+//	}
+//}

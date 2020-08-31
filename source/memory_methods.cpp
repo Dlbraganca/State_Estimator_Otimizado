@@ -7,7 +7,14 @@ std::string hashkey(std::vector<unsigned int> x) {
 	std::string aux;
 	for (unsigned int i = 0; i < x.size(); i++)
 	{
-		aux.push_back(x[i]);
+		if (x[i] == 1)
+		{
+			aux.push_back(1);
+		}
+		else
+		{
+			aux.push_back(2);
+		}
 	}
 	return aux;
 }

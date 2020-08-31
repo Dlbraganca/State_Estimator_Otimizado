@@ -11,7 +11,7 @@
 class criticality {
 protected:
 	std::stack<std::vector<unsigned int>> meas_ck, branch_ck, mu_ck;
-	arma::mat H, M, A, G, E;
+	arma::mat H, M, A, G, E, U;
 	/* H: matriz jacobiano
 	G: matriz de ganho
 	A: matriz de incidencia ramo-no
@@ -21,6 +21,7 @@ protected:
 	std::size_t nm, ns, mu_size;
 	std::vector<std::size_t> mu_location, meas_location;
 public:
+	//double det;
 	~criticality();
 	criticality();
 	criticality(const char*, const char*, const char*, const char*);
@@ -43,5 +44,7 @@ public:
 	std::vector<std::size_t> get_meas_location() { return meas_location; }
 	std::stack<std::vector<unsigned int>> get_meas_ck() { return meas_ck; }
 	std::stack<std::vector<unsigned int>> get_mu_ck() { return mu_ck; }
+	double get_det() { return arma::det(U); }
 };
+
 
