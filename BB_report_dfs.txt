@@ -1,0 +1,11 @@
+Parametros do problema 
+
+Dimensao:21
+k-limite:21
+k-min:1
+k-max:21
+Criticalidade:munit
+Tipo de busca:bb_dfs
+no. solucoes visitadas:2461
+tempo decorrido:719
+memória utilizada:8511488

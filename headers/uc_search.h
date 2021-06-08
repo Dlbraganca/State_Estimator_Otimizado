@@ -6,7 +6,7 @@
 #include"psapi.h"
 
 
-class a_search : public ck_search {
+class uc_search : public ck_search {
 
 protected:
 	std::unordered_map<std::string, int> visited_states;
@@ -17,12 +17,12 @@ protected:
 	std::stack<std::vector<unsigned int>> lopt;
 	std::string param_str;
 public:
-	a_search();
-	~a_search() {};
-	a_search(const char*, std::string);
+	uc_search();
+	~uc_search() {};
+	uc_search(const char*, std::string);
 	//methods
-	a_search(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, unsigned int DIM, std::string CRIT_TYPE, criticality&);
-	a_search(const char*, criticality&);
+	uc_search(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, unsigned int DIM, std::string CRIT_TYPE, criticality&);
+	uc_search(const char*, criticality&);
 	void agent_measurement();
 	void agent_munit();
 	void multiple_munit_report();
@@ -33,5 +33,4 @@ private:
 	void report();
 	unsigned test_ck_4(std::vector<unsigned int>);
 	unsigned int test_ck_munit(std::vector<unsigned int>);
-
 };

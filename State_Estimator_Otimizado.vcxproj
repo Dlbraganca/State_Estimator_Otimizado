@@ -118,7 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ARMA_USE_BLAS;ARMA_USE_LAPACK;DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>F:\UFF\IC\Estimação de Estado\State_Estimator\armadillo-9.880.1\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -126,7 +126,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>F:\UFF\IC\Estimação de Estado\State_Estimator\armadillo-9.880.1\examples\lib_win64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;blas_win64_MT.lib;lapack_win64_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blas_win64_MT.lib;lapack_win64_MT.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;blas_win64_MT.lib;lapack_win64_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\a_search.cpp" />
+    <ClCompile Include="source\a_search_fast.cpp" />
     <ClCompile Include="source\basic_ai_search.cpp" />
     <ClCompile Include="source\bfs_search.cpp" />
     <ClCompile Include="source\ck_search.cpp" />
@@ -155,9 +156,11 @@
     <ClCompile Include="source\ids_search.cpp" />
     <ClCompile Include="source\memory_methods.cpp" />
     <ClCompile Include="source\State_Estimator_Otimizado.cpp" />
+    <ClCompile Include="source\uc_search.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\a_search.h" />
+    <ClInclude Include="headers\a_search_fast.h" />
     <ClInclude Include="headers\basic_ai_search.h" />
     <ClInclude Include="headers\bfs_search.h" />
     <ClInclude Include="headers\ck_search.h" />
@@ -166,6 +169,7 @@
     <ClInclude Include="headers\dfs_search.h" />
     <ClInclude Include="headers\ids_search.h" />
     <ClInclude Include="headers\memory_methods.h" />
+    <ClInclude Include="headers\uc_search.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

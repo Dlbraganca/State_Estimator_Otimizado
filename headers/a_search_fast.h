@@ -4,9 +4,11 @@
 #include <algorithm>
 #include"windows.h"
 #include"psapi.h"
+#include <iostream>
+#include <limits>
 
 
-class a_search : public ck_search {
+class a_search_fast : public ck_search {
 
 protected:
 	std::unordered_map<std::string, int> visited_states;
@@ -16,16 +18,18 @@ protected:
 	const char* CK_PARAM_FILE;
 	std::stack<std::vector<unsigned int>> lopt;
 	std::string param_str;
+	std::vector <state> pile;
+	std::vector <state> temporaryPile;
+	std::vector<unsigned int> freePosition;
 public:
-	a_search();
-	~a_search() {};
-	a_search(const char*, std::string);
+	a_search_fast();
+	~a_search_fast() {};
+	a_search_fast(const char*, std::string);
 	//methods
-	a_search(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, unsigned int DIM, std::string CRIT_TYPE, criticality&);
-	a_search(const char*, criticality&);
+	a_search_fast(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, unsigned int DIM, std::string CRIT_TYPE, criticality&);
+	a_search_fast(const char*, criticality&);
 	void agent_measurement();
 	void agent_munit();
-	void multiple_munit_report();
 	//void save_state();
 private:
 	void printavetor(std::vector<unsigned int>);
@@ -33,5 +37,5 @@ private:
 	void report();
 	unsigned test_ck_4(std::vector<unsigned int>);
 	unsigned int test_ck_munit(std::vector<unsigned int>);
-
+	state fast_sort();
 };

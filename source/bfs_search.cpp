@@ -268,10 +268,24 @@ void bfs_search::agent_munit() {
 			visited_states.emplace(hash_key, 1);
 			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
 		}
-		//if (visited_states.size() > 100000)
+		//if (no_of_visited_solutions/ 2461.0 >= 1)
 		//{
-		//	visited_states.clear();
+		//	std::cout << "100%: " << lopt.size() << std::endl;
+		//	system("pause");
 		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.75)
+		//{
+		//	std::cout << "75%: " << lopt.size() << std::endl;
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.5)
+		//{
+		//	std::cout << "50%: " << lopt.size() << std::endl;
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.25)
+		//{
+		//	std::cout << "25%: " << lopt.size() << std::endl;
+		//}
+
 		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
 		//	std::cout << "Clearing memory...";
 		//	free_memory(next_state.get_cklist()); // save state

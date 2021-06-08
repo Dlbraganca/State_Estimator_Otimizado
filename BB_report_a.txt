@@ -1,0 +1,11 @@
+Parametros do problema 
+
+Dimensao:21
+k-limite:21
+k-min:1
+k-max:21
+Criticalidade:munit
+Tipo de busca:
+no. solucoes visitadas:2141
+tempo decorrido:1349
+memória utilizada:9560064

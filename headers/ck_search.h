@@ -20,9 +20,8 @@
 #include <fstream>
 #include <string>
 #include <cstdio>
-#include"memory_methods.h"
-#include"class_state.h"
-
+#include "./class_state.h"
+#include "./memory_methods.h"
 
 
 
@@ -50,7 +49,7 @@ public:
 	unsigned int get_kmin() { return kmin; };
 	unsigned int get_kmax() { return kmax; };
 	unsigned int get_dim() { return dim; };
-	std::string get_crit_type() { return crit_type; };
+	std::string	get_crit_type() { return crit_type; };
 	std::string get_search_method() { return search_method; };
 	//std::stack<std::vector<unsigned int>>get_lopt() { return lopt_buff; };
 	void set_klim(const unsigned int& KLIM) { klim = KLIM; };

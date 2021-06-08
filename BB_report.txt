@@ -1,11 +1,11 @@
 Parametros do problema 
 
-Dimensao:21
-k-limite:21
+Dimensao:20
+k-limite:20
 k-min:1
-k-max:21
+k-max:20
 Criticalidade:munit
 Tipo de busca:
-no. solucoes visitadas:2461
-tempo decorrido:4150
-memória utilizada:9134080
+no. solucoes visitadas:133
+tempo decorrido:72
+memória utilizada:6782976

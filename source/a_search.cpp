@@ -18,10 +18,9 @@ a_search::a_search(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, unsi
 {
 }
 
-bool comparar_heuristicas( state& a, state& b) {
-		return a.get_heuristic() < b.get_heuristic();
+bool comparar_heuristicas(state& a, state& b) {
+	return a.get_heuristic() > b.get_heuristic();
 }
-
 void ordena_heuristica(std::vector<state>& x) {
 	std::sort(x.begin(), x.end(), &comparar_heuristicas);
 }
@@ -49,10 +48,10 @@ void a_search::agent_measurement() {
 		//}
 		//std::cout << std::endl;
 		ordena_heuristica(priority); //ordena a pilha 
-		for (size_t i = 0; i < priority.size(); i++)
-		{
-			std::cout << priority[i].get_heuristic() << std::endl;
-		}
+		//for (size_t i = 0; i < priority.size(); i++)
+		//{
+		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//}
 		std::cout << std::endl;
 		next_state = priority.back(); //retira o primeiro da pilha e armazena em uma nova variavel
 		priority.pop_back(); // deleta o primeiro da pilha
@@ -203,6 +202,9 @@ void a_search::agent_munit() {
 		priority.pop_back(); // deleta o primeiro da pilha
 		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
 		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
+		/*std::cout << "proximo estado ---------------" << std::endl;
+		printavetor(next_state.get_cklist());
+		std::cout << "heuristica: " << next_state.get_heuristic() << std::endl;*/
 		if (visited_states.find(hash_key) != visited_states.end()) // caso o estado esteja na tabela hash
 		{
 			convergenceValue = visited_states.find(hash_key)->second;  //retorna o valor de convergencia e armazena em uma variavel
@@ -296,6 +298,23 @@ void a_search::agent_munit() {
 			visited_states.emplace(hash_key, 1);
 			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
 		}
+		/*if (no_of_visited_solutions / 2461.0 >= 1)
+		{
+			std::cout << "100%: " << lopt.size() << std::endl;
+			system("pause");
+		}
+		else if (no_of_visited_solutions / 2461.0 >= 0.75)
+		{
+			std::cout << "75%: " << lopt.size() << std::endl;
+		}
+		else if (no_of_visited_solutions / 2461.0 >= 0.5)
+		{
+			std::cout << "50%: " << lopt.size() << std::endl;
+		}
+		else if (no_of_visited_solutions / 2461.0 >= 0.25)
+		{
+			std::cout << "25%: " << lopt.size() << std::endl;
+		}*/
 		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
 		//	std::cout << "Clearing memory...";
 		//	free_memory(next_state.get_cklist()); // save state
@@ -305,7 +324,7 @@ void a_search::agent_munit() {
 		//	//std::cout << "done!!!" << std::endl;
 		//	tfreememoryBegin = clock();
 		//}
-		//if (visited_states.size() > 100000)
+		//if (visited_states.size() > 0)
 		//{
 		//	visited_states.clear();
 		//}
@@ -315,6 +334,20 @@ void a_search::agent_munit() {
 	//time(&tend);// get total time
 	elapsed_time = difftime(tend = clock(), tbegin);
 	report();
+}
+
+void a_search::multiple_munit_report() {
+	int maxSolution = 1000;
+	int solutionNumber = 0;
+	std::ofstream  status_file;
+	status_file.open("status_reportA.txt", std::ios::trunc);
+	while (solutionNumber < maxSolution)
+	{
+		clock_t searchTime = clock();
+		solutionNumber++;
+		agent_munit();
+		status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
+	}
 }
 
 

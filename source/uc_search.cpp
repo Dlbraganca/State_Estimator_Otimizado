@@ -1,43 +1,61 @@
-#include "/UFF/IC/Estimação de Estado/State_Estimator/State_Estimator_Otimizado/headers/dfs_search.h"
+#include "/UFF/IC/Estimação de Estado/State_Estimator/State_Estimator_Otimizado/headers/uc_search.h"
 
 
-dfs_search::dfs_search()
+uc_search::uc_search()
 {
 }
 
-dfs_search::dfs_search(const char*, criticality&)
+uc_search::uc_search(const char*, criticality&)
 {
 }
 
-dfs_search::dfs_search(const char* CK_PARAM_FILE, std::string PARAM_STR) : ck_search(CK_PARAM_FILE)
+uc_search::uc_search(const char* CK_PARAM_FILE, std::string critical_data) : ck_search(CK_PARAM_FILE)
 {
-	param_str = PARAM_STR;
+	critical_data = critical_data;
 }
 
-dfs_search::dfs_search(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, unsigned int DIM, std::string CRIT_TYPE, criticality&)
+uc_search::uc_search(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, unsigned int DIM, std::string CRIT_TYPE, criticality&)
 {
 }
 
-void dfs_search::agent_measurement() {
+bool comparar_heuristicas_uc(state& a, state& b) {
+	return a.get_heuristic() > b.get_heuristic();
+}
+
+void ordena_heuristica_uc(std::vector<state>& x) {
+	std::sort(x.begin(), x.end(), &comparar_heuristicas_uc);
+}
+
+void uc_search::agent_measurement() {
 
 	std::string hash_key;
 	std::vector<unsigned int> aux_vector(critical_data.get_meas_location().size(), 0);
-	state aux(aux_vector, param_str);
+	state aux(aux_vector, critical_data, "uniform");
 	state next_state;
 	clock_t tbegin, tend, tfreememoryBegin, tmaxFreememory = 100000;
 	unsigned int convergenceValue;
-	std::stack <state> priority;
+	std::vector <state> priority;
 
 	tbegin = clock(); // get  begin time
 	tfreememoryBegin = clock();
 
-	priority.push(aux);
+	priority.push_back(aux);
 
 	while (!priority.empty()) //loop ate a pilha ficar vazia
 	{
-		next_state = priority.top(); //retira o primeiro da pilha e armazena em uma nova variavel
-		/*printavetor(next_state.get_cklist());*/
-		priority.pop(); // deleta o primeiro da pilha
+		//for (size_t i = 0; i < priority.size(); i++)
+		//{
+		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//}
+		//std::cout << std::endl;
+		ordena_heuristica_uc(priority); //ordena a pilha 
+		//for (size_t i = 0; i < priority.size(); i++)
+		//{
+		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//}
+		//std::cout << std::endl;
+		next_state = priority.back(); //retira o primeiro da pilha e armazena em uma nova variavel
+		priority.pop_back(); // deleta o primeiro da pilha
 		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
 		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
 		if (visited_states.find(hash_key) != visited_states.end()) // caso o estado esteja na tabela hash
@@ -47,8 +65,6 @@ void dfs_search::agent_measurement() {
 			{
 				visited_states.find(hash_key)->second = 1;  // muda o valor de convergencia para "1"
 				lopt.push(next_state.get_cklist());  // armazena na pilha de resultados
-				//visited_states.emplace(hash_key, 1);
-				/*std::cout << "critica------";*/
 			}
 			else
 			{
@@ -64,8 +80,8 @@ void dfs_search::agent_measurement() {
 						{//caso nao encontrado
 							if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
-								state aux_state(aux_vector, param_str);
-								priority.push(aux_state); // armazena na fila de prioridade
+								state aux_state(aux_vector, critical_data, "uniform");
+								priority.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
 						else
@@ -73,15 +89,15 @@ void dfs_search::agent_measurement() {
 							convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
 							if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 							{
-								state aux_state(aux_vector, param_str);
-								priority.push(aux_state); // armazena na fila de prioridade
-							} 
+								state aux_state(aux_vector, critical_data, "uniform");
+								priority.push_back(aux_state); // armazena na fila de prioridade
+							}
 							else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 							{
 								if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
 								{//caso nao tenha tupla critica
-									state aux_state(aux_vector, param_str);
-									priority.push(aux_state); // armazena na fila de prioridade
+									state aux_state(aux_vector, critical_data, "uniform");
+									priority.push_back(aux_state); // armazena na fila de prioridade
 								}
 							}
 						}
@@ -103,8 +119,8 @@ void dfs_search::agent_measurement() {
 					{
 						if (test_ck_4(aux_vector) == 0)
 						{
-							state aux_state(aux_vector, param_str);
-							priority.push(aux_state); // armazena na fila de prioridad
+							state aux_state(aux_vector, critical_data, "uniform");
+							priority.push_back(aux_state); // armazena na fila de prioridad
 						}
 					}
 					else
@@ -112,15 +128,15 @@ void dfs_search::agent_measurement() {
 						convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
 						if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 						{
-							state aux_state(aux_vector, param_str);
-							priority.push(aux_state); // armazena na fila de prioridade
+							state aux_state(aux_vector, critical_data, "uniform");
+							priority.push_back(aux_state); // armazena na fila de prioridade
 						}
 						else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 						{
 							if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
-								state aux_state(aux_vector, param_str);
-								priority.push(aux_state); // armazena na fila de prioridade
+								state aux_state(aux_vector, critical_data, "uniform");
+								priority.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
 					}
@@ -131,16 +147,10 @@ void dfs_search::agent_measurement() {
 		else
 		{ //caso nao esteja na tabela hash e nao seja observavel
 			//x.positions = next_state;
-			hash_key = hashkey(next_state.get_cklist()); 
+			hash_key = hashkey(next_state.get_cklist());
 			visited_states.emplace(hash_key, 1);
-			/*std::cout << "critica------";
-			printavetor(next_state.get_cklist());*/
 			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
 		}
-		//if (visited_states.size() > 0)
-		//{
-		//	visited_states.clear();
-		//}
 		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
 		//	std::cout << "Clearing memory...";
 		//	free_memory(next_state.get_cklist()); // save state
@@ -158,27 +168,44 @@ void dfs_search::agent_measurement() {
 	report();
 }
 
-void dfs_search::agent_munit() {
+void uc_search::agent_munit() {
 
 	std::string hash_key;
 	std::vector<unsigned int> aux_vector(critical_data.get_mu_location().size(), 0);
-	state aux(aux_vector, param_str);
+	state aux(aux_vector, critical_data, "uniform");
 	state next_state;
 	clock_t tbegin, tend, tfreememoryBegin, tmaxFreememory = 100000;
 	unsigned int convergenceValue;
-	std::stack <state> priority;
+	std::vector <state> priority;
 
 	tbegin = clock(); // get  begin time
 	tfreememoryBegin = clock();
-	priority.push(aux);
+
+	tbegin = clock(); // get  begin time
+	tfreememoryBegin = clock();
+
+	priority.push_back(aux);
 
 	while (!priority.empty()) //loop ate a pilha ficar vazia
 	{
-		next_state = priority.top(); //retira o primeiro da pilha e armazena em uma nova variavel
-		priority.pop(); // deleta o primeiro da pilha
-		//printavetor(next_state.get_cklist());
+		//for (size_t i = 0; i < priority.size(); i++)
+		//{
+		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//}
+		//std::cout << std::endl;
+		ordena_heuristica_uc(priority); //ordena a pilha 
+		//for (size_t i = 0; i < priority.size(); i++)
+		//{
+		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//}
+		//std::cout << "---------"<< std::endl;
+		next_state = priority.back(); //retira o primeiro da pilha e armazena em uma nova variavel
+		priority.pop_back(); // deleta o primeiro da pilha
 		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
 		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
+		/*std::cout << "proximo estado ---------------" << std::endl;
+		printavetor(next_state.get_cklist());
+		std::cout << "heuristica: " << next_state.get_heuristic() << std::endl;*/
 		if (visited_states.find(hash_key) != visited_states.end()) // caso o estado esteja na tabela hash
 		{
 			convergenceValue = visited_states.find(hash_key)->second;  //retorna o valor de convergencia e armazena em uma variavel
@@ -186,8 +213,6 @@ void dfs_search::agent_munit() {
 			{
 				visited_states.find(hash_key)->second = 1;  // muda o valor de convergencia para "1"
 				lopt.push(next_state.get_cklist());  // armazena na pilha de resultados
-				visited_states.emplace(hash_key, 1);
-				/*std::cout << "critica------";*/
 			}
 			else
 			{
@@ -203,8 +228,8 @@ void dfs_search::agent_munit() {
 						{//caso nao encontrado
 							if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
-								state aux_state(aux_vector, param_str);
-								priority.push(aux_state); // armazena na fila de prioridade
+								state aux_state(aux_vector, critical_data, "uniform");
+								priority.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
 						else
@@ -212,15 +237,15 @@ void dfs_search::agent_munit() {
 							convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
 							if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 							{
-								state aux_state(aux_vector, param_str);
-								priority.push(aux_state); // armazena na fila de prioridade
+								state aux_state(aux_vector, critical_data, "uniform");
+								priority.push_back(aux_state); // armazena na fila de prioridade
 							}
 							else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 							{
 								if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
 								{//caso nao tenha tupla critica
-									state aux_state(aux_vector, param_str);
-									priority.push(aux_state); // armazena na fila de prioridade
+									state aux_state(aux_vector, critical_data, "uniform");
+									priority.push_back(aux_state); // armazena na fila de prioridade
 								}
 							}
 						}
@@ -242,8 +267,8 @@ void dfs_search::agent_munit() {
 					{
 						if (test_ck_munit(aux_vector) == 0)
 						{
-							state aux_state(aux_vector, param_str);
-							priority.push(aux_state); // armazena na fila de prioridad
+							state aux_state(aux_vector, critical_data, "uniform");
+							priority.push_back(aux_state); // armazena na fila de prioridad
 						}
 					}
 					else
@@ -251,15 +276,15 @@ void dfs_search::agent_munit() {
 						convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
 						if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 						{
-							state aux_state(aux_vector, param_str);
-							priority.push(aux_state); // armazena na fila de prioridade
+							state aux_state(aux_vector, critical_data, "uniform");
+							priority.push_back(aux_state); // armazena na fila de prioridade
 						}
 						else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 						{
 							if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
-								state aux_state(aux_vector, param_str);
-								priority.push(aux_state); // armazena na fila de prioridade
+								state aux_state(aux_vector, critical_data, "uniform");
+								priority.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
 					}
@@ -273,10 +298,8 @@ void dfs_search::agent_munit() {
 			hash_key = hashkey(next_state.get_cklist());
 			visited_states.emplace(hash_key, 1);
 			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
-			visited_states.emplace(hash_key, 1);
-			/*std::cout << "critica------";*/
 		}
-		if (no_of_visited_solutions / 2461.0>= 1)
+		/*if (no_of_visited_solutions / 2461.0 >= 1)
 		{
 			std::cout << "100%: " << lopt.size() << std::endl;
 			system("pause");
@@ -292,11 +315,7 @@ void dfs_search::agent_munit() {
 		else if (no_of_visited_solutions / 2461.0 >= 0.25)
 		{
 			std::cout << "25%: " << lopt.size() << std::endl;
-		}
-		//if (visited_states.size() > 100000)
-		//{
-		//	visited_states.clear();
-		//}
+		}*/
 		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
 		//	std::cout << "Clearing memory...";
 		//	free_memory(next_state.get_cklist()); // save state
@@ -306,6 +325,10 @@ void dfs_search::agent_munit() {
 		//	//std::cout << "done!!!" << std::endl;
 		//	tfreememoryBegin = clock();
 		//}
+		//if (visited_states.size() > 0)
+		//{
+		//	visited_states.clear();
+		//}
 
 	}
 
@@ -314,8 +337,22 @@ void dfs_search::agent_munit() {
 	report();
 }
 
+void uc_search::multiple_munit_report() {
+	int maxSolution = 1000;
+	int solutionNumber = 0;
+	std::ofstream  status_file;
+	status_file.open("status_reportA.txt", std::ios::trunc);
+	while (solutionNumber < maxSolution)
+	{
+		clock_t searchTime = clock();
+		solutionNumber++;
+		agent_munit();
+		status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
+	}
+}
 
-unsigned int dfs_search::test_ck_4(std::vector<unsigned int> x) {
+
+unsigned int uc_search::test_ck_4(std::vector<unsigned int> x) {
 
 	std::vector<unsigned int> aux;
 	std::string hash_key;
@@ -357,7 +394,7 @@ unsigned int dfs_search::test_ck_4(std::vector<unsigned int> x) {
 	return 0;
 }
 
-unsigned int dfs_search::test_ck_munit(std::vector<unsigned int> x) {
+unsigned int uc_search::test_ck_munit(std::vector<unsigned int> x) {
 
 	std::vector<unsigned int> aux;
 	std::string hash_key;
@@ -400,7 +437,7 @@ unsigned int dfs_search::test_ck_munit(std::vector<unsigned int> x) {
 }
 
 //
-//void dfs_search::save_state() {
+//void uc_search::save_state() {
 //
 //	std::ofstream active_subsets_file("active_subsets.temp", std::ios::out | std::ios::trunc);
 //	std::ofstream critical_list_file("critical_list.temp", std::ios::out | std::ios::trunc);
@@ -462,7 +499,7 @@ unsigned int dfs_search::test_ck_munit(std::vector<unsigned int> x) {
 //	}
 //};
 
-void dfs_search::report() {
+void uc_search::report() {
 
 	std::ofstream critfile, report_file;
 	std::vector<unsigned int> tuple;
@@ -503,7 +540,7 @@ void dfs_search::report() {
 	result = remove("temp_report.temp");// limpeza dos arquivos temporarios
 };
 
-void dfs_search::printavetor(std::vector<unsigned int> x) {
+void uc_search::printavetor(std::vector<unsigned int> x) {
 	for (unsigned int i = 0; i < x.size(); i++)
 	{
 		std::cout << x[i];
@@ -511,7 +548,7 @@ void dfs_search::printavetor(std::vector<unsigned int> x) {
 	std::cout << std::endl;
 }
 
-void dfs_search::free_memory(std::vector<unsigned int> nextState) {
+void uc_search::free_memory(std::vector<unsigned int> nextState) {
 	unsigned int oneCounter = 0;
 	unsigned int aux = 0;
 	//std::vector<unsigned int> endVector(nextState.size(),0);

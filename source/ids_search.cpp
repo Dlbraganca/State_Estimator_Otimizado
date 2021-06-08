@@ -294,10 +294,10 @@ void ids_search::agent_munit() {
 					visited_states.emplace(hash_key, 1);;
 					lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
 				}
-				if (visited_states.size() > 0)
-				{
-					visited_states.clear();
-				}
+				//if (visited_states.size() > 0)
+				//{
+				//	visited_states.clear();
+				//}
 				//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
 				//	std::cout << "Clearing memory...";
 				//	free_memory(next_state.get_cklist()); // save state
@@ -307,7 +307,6 @@ void ids_search::agent_munit() {
 				//	//std::cout << "done!!!" << std::endl;
 				//	tfreememoryBegin = clock();
 				//}
-
 			}
 		}
 		//time(&tend);// get total time

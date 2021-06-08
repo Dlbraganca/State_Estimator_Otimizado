@@ -31,7 +31,19 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 
 		if (search.get_crit_type() == "munit")
 		{
-			search.agent_munit(); //caso seja a busca pela MU
+			//search.agent_munit(); //caso seja a busca pela MU
+			int maxSolution = 200;
+			int solutionNumber = 0;
+			std::ofstream  status_file;
+			status_file.open("status_reportBFS.txt", std::ios::trunc);
+			while (solutionNumber < maxSolution)
+			{
+				a_search_fast search_2 = a_search_fast(ck_param_file, param_str);
+				clock_t searchTime = clock();
+				solutionNumber++;
+				search_2.agent_munit();
+				status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
+			}
 		}
 		else if (search.get_crit_type() == "measurement")
 		{
@@ -46,7 +58,19 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 
 		if (search.get_crit_type() == "munit")
 		{
-			search.agent_munit(); //caso seja a busca pela MU
+			//search.agent_munit(); //caso seja a busca pela MU
+			int maxSolution = 200;
+			int solutionNumber = 0;
+			std::ofstream  status_file;
+			status_file.open("status_reportDFS.txt", std::ios::trunc);
+			while (solutionNumber < maxSolution)
+			{
+				a_search_fast search_2 = a_search_fast(ck_param_file, param_str);
+				clock_t searchTime = clock();
+				solutionNumber++;
+				search_2.agent_munit();
+				status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
+			}
 		}
 		else if (search.get_crit_type() == "measurement")
 		{
@@ -76,7 +100,72 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 
 		if (search.get_crit_type() == "munit")
 		{
-			search.agent_munit(); //caso seja a busca pela MU
+			//search.agent_munit(); //caso seja a busca pela MU
+			int maxSolution = 200;
+			int solutionNumber = 0;
+			std::ofstream  status_file;
+			status_file.open("status_reportA.txt", std::ios::trunc);
+			while (solutionNumber < maxSolution)
+			{
+				a_search search_2 = a_search(ck_param_file, param_str);
+				clock_t searchTime = clock();
+				solutionNumber++;
+				search_2.agent_munit();
+				status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
+			}
+		}
+		else if (search.get_crit_type() == "measurement")
+		{
+			search.agent_measurement(); //caso seja a busca pela medidas
+		}
+	}
+	else if (param_str.compare("bb_a*s_fast") == 0) {  // caso a busca seja em profundidade
+
+		PARAM_STR = "A*";  // muda a variavel para o arquivo final 
+
+		a_search_fast search = a_search_fast(ck_param_file, param_str); //construtor da busca em profundidade
+
+		if (search.get_crit_type() == "munit")
+		{
+			//search.agent_munit(); //caso seja a busca pela MU
+			int maxSolution = 200;
+			int solutionNumber = 0;
+			std::ofstream  status_file;
+			status_file.open("status_reportA_fast.txt", std::ios::trunc);
+			while (solutionNumber < maxSolution)
+			{
+				a_search_fast search_2 = a_search_fast(ck_param_file, param_str);
+				clock_t searchTime = clock();
+				solutionNumber++;
+				search_2.agent_munit();
+				status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
+			}
+		}
+		else if (search.get_crit_type() == "measurement")
+		{
+			search.agent_measurement(); //caso seja a busca pela medidas
+		}
+	}
+	else if (param_str.compare("bb_uc") == 0) {
+		PARAM_STR = "UC";  // muda a variavel para o arquivo final 
+
+		uc_search search = uc_search(ck_param_file, param_str); //construtor da busca em profundidade
+
+		if (search.get_crit_type() == "munit")
+		{
+			//search.agent_munit(); //caso seja a busca pela MU
+			int maxSolution = 200;
+			int solutionNumber = 0;
+			std::ofstream  status_file;
+			status_file.open("status_reportUC.txt", std::ios::trunc);
+			while (solutionNumber < maxSolution)
+			{
+				uc_search search_2 = uc_search(ck_param_file, param_str);
+				clock_t searchTime = clock();
+				solutionNumber++;
+				search_2.agent_munit();
+				status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
+			}
 		}
 		else if (search.get_crit_type() == "measurement")
 		{

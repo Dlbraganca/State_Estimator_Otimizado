@@ -1,10 +1,11 @@
 #pragma once
-#pragma once
 #include "ck_search.h"
 #include "bfs_search.h"
 #include "dfs_search.h"
 #include "ids_search.h"
 #include "a_search.h"
+#include "a_search_fast.h"
+#include "uc_search.h"
 #include<unordered_map>
 #include<vector>
 

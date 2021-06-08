@@ -1,5 +1,6 @@
 #include<vector>
 #include<string>
+#include"./criticality.h"
 
 class state {
 
@@ -22,7 +23,7 @@ public:
 		{
 			HEURISTIC = measurement_heuristic();
 		}
-		else
+		else if (x == "munit")
 		{
 			HEURISTIC = munit_heuristic();
 		}
@@ -34,27 +35,28 @@ public:
 	double get_heuristic() {
 		return HEURISTIC;
 	}
+	void set_heuristic(double x) { HEURISTIC = x; }
 private:
 	double set_depth(std::vector<unsigned int> cklist) {
 		unsigned int count = 0;
 		for (size_t i = 0; i < cklist.size(); i++)
 		{
-			if (cklist[i] == 0)
+			if (cklist[i] == 1)
 			{
 				count++;
 			}
 		}
-		return 1/count;
-		//return count;
+		//return 1.0/count;
+		return count;
 	}
 	double measurement_heuristic() {
 
 		CRITICAL_DATA.measurement_criticality(CKLIST);
-		return 1/CRITICAL_DATA.get_det();
+		return CRITICAL_DATA.get_det();
 	}
 	double munit_heuristic() {
 
 		CRITICAL_DATA.munit_criticality(CKLIST);
-		return 1 / CRITICAL_DATA.get_det();
+		return CRITICAL_DATA.get_det();
 	}
 };
