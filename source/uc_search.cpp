@@ -1,4 +1,4 @@
-#include "/UFF/IC/Estimação de Estado/State_Estimator/State_Estimator_Otimizado/headers/uc_search.h"
+#include "../headers/uc_search.h"
 
 
 uc_search::uc_search()

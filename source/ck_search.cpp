@@ -1,4 +1,4 @@
-#include  "/UFF/IC/Estimação de Estado/State_Estimator/State_Estimator_Otimizado/headers/ck_search.h"
+#include  "../headers/ck_search.h"
 
 ck_search::ck_search() {
 	// default constructor

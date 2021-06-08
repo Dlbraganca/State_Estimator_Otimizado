@@ -1,4 +1,4 @@
-#include "/UFF/IC/Estimação de Estado/State_Estimator/State_Estimator_Otimizado/headers/bfs_search.h"
+#include "../headers/bfs_search.h"
 
 
 bfs_search::bfs_search()

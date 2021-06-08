@@ -1,6 +1,6 @@
 #include<vector>
 #include<string>
-#include"./criticality.h"
+#include"criticality.h"
 
 class state {
 

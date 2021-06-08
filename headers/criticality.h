@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #ifndef CRITICALITY_H
 #define CRITICALITY_H
 #endif

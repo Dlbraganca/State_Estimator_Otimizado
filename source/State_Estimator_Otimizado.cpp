@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "/UFF/IC/Estimação de Estado/State_Estimator/State_Estimator_Otimizado/headers/basic_ai_search.h"
+#include "../headers/basic_ai_search.h"
 
 void main() {
 

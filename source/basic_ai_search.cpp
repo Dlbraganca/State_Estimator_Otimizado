@@ -1,4 +1,4 @@
-#include "/UFF/IC/Estimação de Estado/State_Estimator/State_Estimator_Otimizado/headers/basic_ai_search.h"
+#include "../headers/basic_ai_search.h"
 //johnsus
 
 
@@ -31,8 +31,8 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 
 		if (search.get_crit_type() == "munit")
 		{
-			//search.agent_munit(); //caso seja a busca pela MU
-			int maxSolution = 200;
+			search.agent_munit(); //caso seja a busca pela MU
+			/*int maxSolution = 200;
 			int solutionNumber = 0;
 			std::ofstream  status_file;
 			status_file.open("status_reportBFS.txt", std::ios::trunc);
@@ -43,7 +43,7 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 				solutionNumber++;
 				search_2.agent_munit();
 				status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
-			}
+			}*/
 		}
 		else if (search.get_crit_type() == "measurement")
 		{
@@ -58,8 +58,8 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 
 		if (search.get_crit_type() == "munit")
 		{
-			//search.agent_munit(); //caso seja a busca pela MU
-			int maxSolution = 200;
+			search.agent_munit(); //caso seja a busca pela MU
+			/*int maxSolution = 200;
 			int solutionNumber = 0;
 			std::ofstream  status_file;
 			status_file.open("status_reportDFS.txt", std::ios::trunc);
@@ -70,7 +70,7 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 				solutionNumber++;
 				search_2.agent_munit();
 				status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
-			}
+			}*/
 		}
 		else if (search.get_crit_type() == "measurement")
 		{
@@ -100,8 +100,8 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 
 		if (search.get_crit_type() == "munit")
 		{
-			//search.agent_munit(); //caso seja a busca pela MU
-			int maxSolution = 200;
+			search.agent_munit(); //caso seja a busca pela MU
+			/*int maxSolution = 200;
 			int solutionNumber = 0;
 			std::ofstream  status_file;
 			status_file.open("status_reportA.txt", std::ios::trunc);
@@ -112,7 +112,7 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 				solutionNumber++;
 				search_2.agent_munit();
 				status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
-			}
+			}*/
 		}
 		else if (search.get_crit_type() == "measurement")
 		{
@@ -127,8 +127,8 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 
 		if (search.get_crit_type() == "munit")
 		{
-			//search.agent_munit(); //caso seja a busca pela MU
-			int maxSolution = 200;
+			search.agent_munit(); //caso seja a busca pela MU
+			/*int maxSolution = 200;
 			int solutionNumber = 0;
 			std::ofstream  status_file;
 			status_file.open("status_reportA_fast.txt", std::ios::trunc);
@@ -139,7 +139,7 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 				solutionNumber++;
 				search_2.agent_munit();
 				status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
-			}
+			}*/
 		}
 		else if (search.get_crit_type() == "measurement")
 		{
@@ -153,8 +153,8 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 
 		if (search.get_crit_type() == "munit")
 		{
-			//search.agent_munit(); //caso seja a busca pela MU
-			int maxSolution = 200;
+			search.agent_munit(); //caso seja a busca pela MU
+			/*int maxSolution = 200;
 			int solutionNumber = 0;
 			std::ofstream  status_file;
 			status_file.open("status_reportUC.txt", std::ios::trunc);
@@ -165,7 +165,7 @@ void basic_ai_search::get_search_type(const char* ck_param_file, std::string& pa
 				solutionNumber++;
 				search_2.agent_munit();
 				status_file << "solucao: " << solutionNumber << " tempo_de_execucao: " << abs(searchTime - clock()) << " ms" << " memoria: " << get_memory() << "\n";
-			}
+			}*/
 		}
 		else if (search.get_crit_type() == "measurement")
 		{
