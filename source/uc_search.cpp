@@ -18,44 +18,124 @@ uc_search::uc_search(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, un
 {
 }
 
-bool comparar_heuristicas_uc(state& a, state& b) {
-	return a.get_heuristic() > b.get_heuristic();
-}
+//bool comparar_heuristicas_uc(state& a, state& b) {
+//	return a.get_heuristic() > b.get_heuristic();
+//}
+//
+//void ordena_heuristica_uc(std::vector<state>& x) {
+//	std::sort(x.begin(), x.end(), &comparar_heuristicas_uc);
+//}
 
-void ordena_heuristica_uc(std::vector<state>& x) {
-	std::sort(x.begin(), x.end(), &comparar_heuristicas_uc);
+
+state uc_search::fast_sort_uc() {
+#undef max
+	double bestDeepth = std::numeric_limits<double>::max(); //pegar a menor heuristica entao iniciamos com o maior valor
+	unsigned int positionBest = 0;
+	state bestState;
+	bool foundTemporaryPile = false;
+	bool foundPile = false;
+	//std::cout << "heuristica da pilha : \n";
+	for (unsigned int i = 0; i < pile.size(); i++) //avalia na pilha
+	{
+		//std::cout << pile[i].get_deepth() << std::endl;
+		if (pile[i].get_deepth() < bestDeepth)
+		{
+			bestState = pile[i];
+			bestDeepth = bestState.get_deepth();
+			positionBest = i;
+			foundPile = true;
+		}
+	}
+	//std::cout << "heuristica da pilha temporaria: \n";
+	for (unsigned int i = 0; i < temporaryPile.size(); i++)//avalia entre os novos estados
+	{
+		//std::cout << temporaryPile[i].get_deepth() << std::endl;
+		if (temporaryPile[i].get_deepth() < bestDeepth)
+		{
+			bestState = temporaryPile[i];
+			bestDeepth = bestState.get_deepth();
+			positionBest = i;
+			foundTemporaryPile = true;
+		}
+	}
+	////TESTE HEURSITICA
+	//std::cout << "pilha antiga: \n";
+	//for (size_t i = 0; i < pile.size(); i++)
+	//{
+	//	std::cout << pile[i].get_deepth() << std::endl;
+	//}
+	//std::cout << "pilha nova: \n";
+	//for (size_t i = 0; i < temporaryPile.size(); i++)
+	//{
+	//	std::cout << temporaryPile[i].get_deepth() << std::endl;
+	//}
+	//std::cout << "heuristica escolhida : " << bestState.get_deepth() << std::endl;
+	////
+	if (foundTemporaryPile) //se a melhor heurisitica foi encontrada na pilha temporaria
+	{
+		temporaryPile[positionBest].set_deepth(std::numeric_limits<double>::max());
+	}
+	else if (foundPile) //se a melhor heurisitica foi encontrada na pilha
+	{
+		pile[positionBest].set_deepth(std::numeric_limits<double>::max());//seta o valor desse estado com a maior heuristica possivel (busca-se a menor heuristica)
+		freePosition.push_back(positionBest); // adiciona essa posicao no vetor com as posicoes livres
+	}
+	while (!temporaryPile.empty())
+	{
+		if (temporaryPile.back().get_deepth() < std::numeric_limits<double>::max())
+		{
+			if (!freePosition.empty())
+			{
+				unsigned int position = freePosition.back();
+				freePosition.pop_back();
+				pile[position] = temporaryPile.back();
+				temporaryPile.pop_back();
+			}
+			else
+			{
+				pile.push_back(temporaryPile.back());
+				temporaryPile.pop_back();
+			}
+		}
+		else
+		{
+			temporaryPile.pop_back();
+		}
+	}
+	if (bestState.get_cklist().empty()) //quando a pilha ta limpa so ira existir heuristicas com o valor maximo e por isso o melhor resultado sera o vazio
+	{
+		pile.clear();
+	}
+	return bestState;
 }
 
 void uc_search::agent_measurement() {
 
 	std::string hash_key;
 	std::vector<unsigned int> aux_vector(critical_data.get_meas_location().size(), 0);
-	state aux(aux_vector, critical_data, "uniform");
-	state next_state;
-	clock_t tbegin, tend, tfreememoryBegin, tmaxFreememory = 100000;
+	state next_state(aux_vector, critical_data, "uniform");
+	clock_t tbegin, tend;
 	unsigned int convergenceValue;
 	std::vector <state> priority;
 
 	tbegin = clock(); // get  begin time
-	tfreememoryBegin = clock();
 
-	priority.push_back(aux);
 
-	while (!priority.empty()) //loop ate a pilha ficar vazia
+	while (!next_state.get_cklist().empty())  //loop ate a pilha ficar vazia (nesse caso é cklist vazio pq a ordem quando nao tem mais estados retorna uma "state" com o ck_list vazio
 	{
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
 		//	std::cout << priority[i].get_heuristic() << std::endl;
 		//}
 		//std::cout << std::endl;
-		ordena_heuristica_uc(priority); //ordena a pilha 
+		//ordena_heuristica_uc(priority); //ordena a pilha 
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
 		//	std::cout << priority[i].get_heuristic() << std::endl;
 		//}
 		//std::cout << std::endl;
-		next_state = priority.back(); //retira o primeiro da pilha e armazena em uma nova variavel
-		priority.pop_back(); // deleta o primeiro da pilha
+		//next_state = priority.back(); //retira o primeiro da pilha e armazena em uma nova variavel
+		//priority.pop_back(); // deleta o primeiro da pilha
 		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
 		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
 		if (visited_states.find(hash_key) != visited_states.end()) // caso o estado esteja na tabela hash
@@ -81,7 +161,7 @@ void uc_search::agent_measurement() {
 							if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
 								state aux_state(aux_vector, critical_data, "uniform");
-								priority.push_back(aux_state); // armazena na fila de prioridade
+								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
 						else
@@ -90,14 +170,14 @@ void uc_search::agent_measurement() {
 							if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 							{
 								state aux_state(aux_vector, critical_data, "uniform");
-								priority.push_back(aux_state); // armazena na fila de prioridade
+								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 							else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 							{
 								if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
 								{//caso nao tenha tupla critica
 									state aux_state(aux_vector, critical_data, "uniform");
-									priority.push_back(aux_state); // armazena na fila de prioridade
+									temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 								}
 							}
 						}
@@ -120,7 +200,7 @@ void uc_search::agent_measurement() {
 						if (test_ck_4(aux_vector) == 0)
 						{
 							state aux_state(aux_vector, critical_data, "uniform");
-							priority.push_back(aux_state); // armazena na fila de prioridad
+							temporaryPile.push_back(aux_state); // armazena na fila de prioridad
 						}
 					}
 					else
@@ -129,14 +209,14 @@ void uc_search::agent_measurement() {
 						if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 						{
 							state aux_state(aux_vector, critical_data, "uniform");
-							priority.push_back(aux_state); // armazena na fila de prioridade
+							temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 						}
 						else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 						{
 							if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
 								state aux_state(aux_vector, critical_data, "uniform");
-								priority.push_back(aux_state); // armazena na fila de prioridade
+								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
 					}
@@ -151,6 +231,7 @@ void uc_search::agent_measurement() {
 			visited_states.emplace(hash_key, 1);
 			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
 		}
+		next_state = fast_sort_uc(); // escolhe o a maior heuristica da borda e deleta ela
 		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
 		//	std::cout << "Clearing memory...";
 		//	free_memory(next_state.get_cklist()); // save state
@@ -172,35 +253,29 @@ void uc_search::agent_munit() {
 
 	std::string hash_key;
 	std::vector<unsigned int> aux_vector(critical_data.get_mu_location().size(), 0);
-	state aux(aux_vector, critical_data, "uniform");
-	state next_state;
-	clock_t tbegin, tend, tfreememoryBegin, tmaxFreememory = 100000;
+	state next_state(aux_vector, critical_data, "uniform");
+	clock_t tbegin, tend;
 	unsigned int convergenceValue;
 	std::vector <state> priority;
 
 	tbegin = clock(); // get  begin time
-	tfreememoryBegin = clock();
 
-	tbegin = clock(); // get  begin time
-	tfreememoryBegin = clock();
 
-	priority.push_back(aux);
-
-	while (!priority.empty()) //loop ate a pilha ficar vazia
+	while (!next_state.get_cklist().empty()) //loop ate a pilha ficar vazia (nesse caso é cklist vazio pq a ordem quando nao tem mais estados retorna uma "state" com o ck_list vazio
 	{
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
 		//	std::cout << priority[i].get_heuristic() << std::endl;
 		//}
 		//std::cout << std::endl;
-		ordena_heuristica_uc(priority); //ordena a pilha 
+		//ordena_heuristica_uc(priority); //ordena a pilha 
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
 		//	std::cout << priority[i].get_heuristic() << std::endl;
 		//}
 		//std::cout << "---------"<< std::endl;
-		next_state = priority.back(); //retira o primeiro da pilha e armazena em uma nova variavel
-		priority.pop_back(); // deleta o primeiro da pilha
+		//next_state = priority.back(); //retira o primeiro da pilha e armazena em uma nova variavel
+		//priority.pop_back(); // deleta o primeiro da pilha
 		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
 		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
 		/*std::cout << "proximo estado ---------------" << std::endl;
@@ -229,7 +304,7 @@ void uc_search::agent_munit() {
 							if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
 								state aux_state(aux_vector, critical_data, "uniform");
-								priority.push_back(aux_state); // armazena na fila de prioridade
+								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
 						else
@@ -238,14 +313,14 @@ void uc_search::agent_munit() {
 							if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 							{
 								state aux_state(aux_vector, critical_data, "uniform");
-								priority.push_back(aux_state); // armazena na fila de prioridade
+								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 							else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 							{
 								if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
 								{//caso nao tenha tupla critica
 									state aux_state(aux_vector, critical_data, "uniform");
-									priority.push_back(aux_state); // armazena na fila de prioridade
+									temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 								}
 							}
 						}
@@ -268,7 +343,7 @@ void uc_search::agent_munit() {
 						if (test_ck_munit(aux_vector) == 0)
 						{
 							state aux_state(aux_vector, critical_data, "uniform");
-							priority.push_back(aux_state); // armazena na fila de prioridad
+							temporaryPile.push_back(aux_state); // armazena na fila de prioridad
 						}
 					}
 					else
@@ -277,14 +352,14 @@ void uc_search::agent_munit() {
 						if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 						{
 							state aux_state(aux_vector, critical_data, "uniform");
-							priority.push_back(aux_state); // armazena na fila de prioridade
+							temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 						}
 						else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 						{
 							if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
 								state aux_state(aux_vector, critical_data, "uniform");
-								priority.push_back(aux_state); // armazena na fila de prioridade
+								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
 					}
@@ -299,23 +374,24 @@ void uc_search::agent_munit() {
 			visited_states.emplace(hash_key, 1);
 			lopt.push(next_state.get_cklist());  // coloca na pilha de ck criticas
 		}
-		/*if (no_of_visited_solutions / 2461.0 >= 1)
-		{
-			std::cout << "100%: " << lopt.size() << std::endl;
-			system("pause");
-		}
-		else if (no_of_visited_solutions / 2461.0 >= 0.75)
-		{
-			std::cout << "75%: " << lopt.size() << std::endl;
-		}
-		else if (no_of_visited_solutions / 2461.0 >= 0.5)
-		{
-			std::cout << "50%: " << lopt.size() << std::endl;
-		}
-		else if (no_of_visited_solutions / 2461.0 >= 0.25)
-		{
-			std::cout << "25%: " << lopt.size() << std::endl;
-		}*/
+		next_state = fast_sort_uc(); // escolhe o a maior heuristica da borda e deleta ela
+		//if (no_of_visited_solutions / 2461.0 >= 1)
+		//{
+		//	std::cout << "100%: " << lopt.size() << std::endl;
+		//	system("pause");
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.75)
+		//{
+		//	std::cout << "75%: " << lopt.size() << std::endl;
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.5)
+		//{
+		//	std::cout << "50%: " << lopt.size() << std::endl;
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.25)
+		//{
+		//	std::cout << "25%: " << lopt.size() << std::endl;
+		//}
 		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
 		//	std::cout << "Clearing memory...";
 		//	free_memory(next_state.get_cklist()); // save state

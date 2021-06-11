@@ -16,6 +16,9 @@ protected:
 	const char* CK_PARAM_FILE;
 	std::stack<std::vector<unsigned int>> lopt;
 	std::string param_str;
+	std::vector <state> pile;
+	std::vector <state> temporaryPile;
+	std::vector<unsigned int> freePosition;
 public:
 	uc_search();
 	~uc_search() {};
@@ -33,4 +36,5 @@ private:
 	void report();
 	unsigned test_ck_4(std::vector<unsigned int>);
 	unsigned int test_ck_munit(std::vector<unsigned int>);
+	state fast_sort_uc();
 };

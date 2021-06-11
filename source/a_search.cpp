@@ -19,7 +19,7 @@ a_search::a_search(unsigned int KLIM, unsigned int KMIN, unsigned int KMAX, unsi
 }
 
 bool comparar_heuristicas(state& a, state& b) {
-	return a.get_heuristic() > b.get_heuristic();
+	return a.get_f() > b.get_f();
 }
 void ordena_heuristica(std::vector<state>& x) {
 	std::sort(x.begin(), x.end(), &comparar_heuristicas);
@@ -44,13 +44,13 @@ void a_search::agent_measurement() {
 	{
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
-		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//	std::cout << priority[i].get_f() << std::endl;
 		//}
 		//std::cout << std::endl;
 		ordena_heuristica(priority); //ordena a pilha 
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
-		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//	std::cout << priority[i].get_f() << std::endl;
 		//}
 		std::cout << std::endl;
 		next_state = priority.back(); //retira o primeiro da pilha e armazena em uma nova variavel
@@ -189,13 +189,13 @@ void a_search::agent_munit() {
 	{
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
-		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//	std::cout << priority[i].get_f() << std::endl;
 		//}
 		//std::cout << std::endl;
 		ordena_heuristica(priority); //ordena a pilha 
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
-		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//	std::cout << priority[i].get_f() << std::endl;
 		//}
 		//std::cout << "---------"<< std::endl;
 		next_state = priority.back(); //retira o primeiro da pilha e armazena em uma nova variavel
@@ -204,7 +204,7 @@ void a_search::agent_munit() {
 		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
 		/*std::cout << "proximo estado ---------------" << std::endl;
 		printavetor(next_state.get_cklist());
-		std::cout << "heuristica: " << next_state.get_heuristic() << std::endl;*/
+		std::cout << "heuristica: " << next_state.get_f() << std::endl;*/
 		if (visited_states.find(hash_key) != visited_states.end()) // caso o estado esteja na tabela hash
 		{
 			convergenceValue = visited_states.find(hash_key)->second;  //retorna o valor de convergencia e armazena em uma variavel

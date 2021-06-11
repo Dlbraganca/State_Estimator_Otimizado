@@ -276,23 +276,23 @@ void dfs_search::agent_munit() {
 			visited_states.emplace(hash_key, 1);
 			/*std::cout << "critica------";*/
 		}
-		if (no_of_visited_solutions / 2461.0>= 1)
-		{
-			std::cout << "100%: " << lopt.size() << std::endl;
-			system("pause");
-		}
-		else if (no_of_visited_solutions / 2461.0 >= 0.75)
-		{
-			std::cout << "75%: " << lopt.size() << std::endl;
-		}
-		else if (no_of_visited_solutions / 2461.0 >= 0.5)
-		{
-			std::cout << "50%: " << lopt.size() << std::endl;
-		}
-		else if (no_of_visited_solutions / 2461.0 >= 0.25)
-		{
-			std::cout << "25%: " << lopt.size() << std::endl;
-		}
+		//if (no_of_visited_solutions / 2461.0 >= 1)
+		//{
+		//	std::cout << "100%: " << lopt.size() << std::endl;
+		//	system("pause");
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.75)
+		//{
+		//	std::cout << "75%: " << lopt.size() << std::endl;
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.5)
+		//{
+		//	std::cout << "50%: " << lopt.size() << std::endl;
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.25)
+		//{
+		//	std::cout << "25%: " << lopt.size() << std::endl;
+		//}
 		//if (visited_states.size() > 100000)
 		//{
 		//	visited_states.clear();

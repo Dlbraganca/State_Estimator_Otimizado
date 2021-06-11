@@ -7,5 +7,5 @@ k-max:20
 Criticalidade:munit
 Tipo de busca:
 no. solucoes visitadas:133
-tempo decorrido:72
-memória utilizada:6782976
+tempo decorrido:1948
+memória utilizada:6746112

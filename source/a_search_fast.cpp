@@ -19,7 +19,7 @@ a_search_fast::a_search_fast(unsigned int KLIM, unsigned int KMIN, unsigned int 
 }
 
 //bool comparar_heuristicas(state& a, state& b) {
-//	return a.get_heuristic() < b.get_heuristic();
+//	return a.get_f() < b.get_f();
 //}
 //
 //void ordena_heuristica(std::vector<state>& x) {
@@ -28,7 +28,7 @@ a_search_fast::a_search_fast(unsigned int KLIM, unsigned int KMIN, unsigned int 
 
 state a_search_fast::fast_sort() {
 	#undef max
-	double bestHeuristic = std::numeric_limits<double>::max(); //pegar a menor heuristica entao iniciamos com o maior valor
+	double bestF = std::numeric_limits<double>::max(); //pegar a menor heuristica entao iniciamos com o maior valor
 	unsigned int positionBest = 0;
 	state bestState;
 	bool foundTemporaryPile = false;
@@ -36,11 +36,11 @@ state a_search_fast::fast_sort() {
 	//std::cout << "heuristica da pilha : \n";
 	for (unsigned int i = 0; i < pile.size(); i++) //avalia na pilha
 	{
-		//std::cout << pile[i].get_heuristic() << std::endl;
-		if (pile[i].get_heuristic() < bestHeuristic)
+		//std::cout << pile[i].get_f() << std::endl;
+		if (pile[i].get_f() < bestF)
 		{
 			bestState = pile[i];
-			bestHeuristic = bestState.get_heuristic();
+			bestF = bestState.get_f();
 			positionBest = i;
 			foundPile = true;
 		}
@@ -48,28 +48,40 @@ state a_search_fast::fast_sort() {
 	//std::cout << "heuristica da pilha temporaria: \n";
 	for (unsigned int i = 0; i < temporaryPile.size(); i++)//avalia entre os novos estados
 	{
-		//std::cout << temporaryPile[i].get_heuristic() << std::endl;
-		if (temporaryPile[i].get_heuristic() < bestHeuristic)
+		//std::cout << temporaryPile[i].get_f() << std::endl;
+		if (temporaryPile[i].get_f() < bestF)
 		{
 			bestState = temporaryPile[i];
-			bestHeuristic = bestState.get_heuristic();
+			bestF = bestState.get_f();
 			positionBest = i;
 			foundTemporaryPile = true;
 		}
 	}
-
+	////TESTE HEURSITICA
+	//std::cout << "pilha antiga: \n";
+	//for (size_t i = 0; i < pile.size(); i++)
+	//{
+	//	std::cout << pile[i].get_f() << std::endl;
+	//}
+	//std::cout << "pilha nova: \n";
+	//for (size_t i = 0; i < temporaryPile.size(); i++)
+	//{
+	//	std::cout << temporaryPile[i].get_f() << std::endl;
+	//}
+	//std::cout << "heuristica escolhida : " << bestState.get_f() << std::endl;
+	////
 	if (foundTemporaryPile) //se a melhor heurisitica foi encontrada na pilha temporaria
 	{
-		temporaryPile[positionBest].set_heuristic(std::numeric_limits<double>::max());
+		temporaryPile[positionBest].set_f(std::numeric_limits<double>::max());
 	}
 	else if (foundPile) //se a melhor heurisitica foi encontrada na pilha
 	{
-		pile[positionBest].set_heuristic(std::numeric_limits<double>::max());//seta o valor desse estado com a maior heuristica possivel (busca-se a menor heuristica)
+		pile[positionBest].set_f(std::numeric_limits<double>::max());//seta o valor desse estado com a maior heuristica possivel (busca-se a menor heuristica)
 		freePosition.push_back(positionBest); // adiciona essa posicao no vetor com as posicoes livres
 	}
 	while (!temporaryPile.empty())
 	{
-		if (temporaryPile.back().get_heuristic() < std::numeric_limits<double>::max())
+		if (temporaryPile.back().get_f() < std::numeric_limits<double>::max())
 		{
 			if (!freePosition.empty())
 			{
@@ -89,7 +101,7 @@ state a_search_fast::fast_sort() {
 			temporaryPile.pop_back();
 		}
 	}
-	//std::cout << "heuristica escolhida : " << bestState.get_heuristic() << std::endl;
+	//std::cout << "heuristica escolhida : " << bestState.get_f() << std::endl;
 	if (bestState.get_cklist().empty()) //quando a pilha ta limpa so ira existir heuristicas com o valor maximo e por isso o melhor resultado sera o vazio
 	{
 		pile.clear();
@@ -110,17 +122,17 @@ void a_search_fast::agent_measurement() {
 
 	//priority.push_back(aux);
 
-	while (!next_state.get_cklist().empty()) //loop ate a pilha ficar vazia
+	while (!next_state.get_cklist().empty())  //loop ate a pilha ficar vazia (nesse caso é cklist vazio pq a ordem quando nao tem mais estados retorna uma "state" com o ck_list vazio
 	{
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
-		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//	std::cout << priority[i].get_f() << std::endl;
 		//}
 		//std::cout << std::endl;
 
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
-		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//	std::cout << priority[i].get_f() << std::endl;
 		//}
 		//std::cout << std::endl;
 		no_of_visited_solutions++; // adiciona em 1 o numero de solucoes visitadas
@@ -250,17 +262,17 @@ void a_search_fast::agent_munit() {
 	tbegin = clock(); // get  begin time
 	tfreememoryBegin = clock();
 
-	while (!next_state.get_cklist().empty()) //loop ate a pilha ficar vazia
+	while (!next_state.get_cklist().empty())  //loop ate a pilha ficar vazia (nesse caso é cklist vazio pq a ordem quando nao tem mais estados retorna uma "state" com o ck_list vazio
 	{
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
-		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//	std::cout << priority[i].get_f() << std::endl;
 		//}
 		//std::cout << std::endl;
 		//ordena_heuristica(priority); //ordena a pilha 
 		//for (size_t i = 0; i < priority.size(); i++)
 		//{
-		//	std::cout << priority[i].get_heuristic() << std::endl;
+		//	std::cout << priority[i].get_f() << std::endl;
 		//}
 		//std::cout << "---------"<< std::endl;
 		//next_state = priority.back(); //retira o primeiro da pilha e armazena em uma nova variavel
@@ -269,7 +281,7 @@ void a_search_fast::agent_munit() {
 		hash_key = hashkey(next_state.get_cklist()); // calculo da funcao hash para o vetor
 		//std::cout << "proximo estado ---------------" << std::endl;
 		//printavetor(next_state.get_cklist());
-		//std::cout << "heuristica: " << next_state.get_heuristic() << std::endl;
+		//std::cout << "heuristica: " << next_state.get_f() << std::endl;
 		if (visited_states.find(hash_key) != visited_states.end()) // caso o estado esteja na tabela hash
 		{
 			convergenceValue = visited_states.find(hash_key)->second;  //retorna o valor de convergencia e armazena em uma variavel
@@ -365,10 +377,27 @@ void a_search_fast::agent_munit() {
 		}
 		/*for (int i = 0; i < pile.size(); i++)
 		{
-			std::cout << pile[i].get_heuristic() << std::endl;
+			std::cout << pile[i].get_f() << std::endl;
 		}*/
 		next_state = fast_sort(); // escolhe o a maior heuristica da borda e deleta ela
-		/*std::cout << "proxima heuristica: " << next_state.get_heuristic() << std::endl;*/
+		//if (no_of_visited_solutions / 2461.0 >= 1)
+		//{
+		//	std::cout << "100%: " << lopt.size() << std::endl;
+		//	system("pause");
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.75)
+		//{
+		//	std::cout << "75%: " << lopt.size() << std::endl;
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.5)
+		//{
+		//	std::cout << "50%: " << lopt.size() << std::endl;
+		//}
+		//else if (no_of_visited_solutions / 2461.0 >= 0.25)
+		//{
+		//	std::cout << "25%: " << lopt.size() << std::endl;
+		//}
+		/*std::cout << "proxima heuristica: " << next_state.get_f() << std::endl;*/
 		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
 		//	std::cout << "Clearing memory...";
 		//	free_memory(next_state.get_cklist()); // save state
