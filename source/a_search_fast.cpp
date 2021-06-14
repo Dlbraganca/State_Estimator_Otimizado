@@ -159,7 +159,7 @@ void a_search_fast::agent_measurement() {
 						{//caso nao encontrado
 							if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
-								state aux_state(aux_vector, critical_data, "measurement");
+								state aux_state(aux_vector, critical_data, "measurement", next_state);
 								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
@@ -168,14 +168,14 @@ void a_search_fast::agent_measurement() {
 							convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
 							if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 							{
-								state aux_state(aux_vector, critical_data, "measurement");
+								state aux_state(aux_vector, critical_data, "measurement", next_state);
 								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 							else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 							{
 								if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
 								{//caso nao tenha tupla critica
-									state aux_state(aux_vector, critical_data, "measurement");
+									state aux_state(aux_vector, critical_data, "measurement", next_state);
 									temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 								}
 							}
@@ -198,7 +198,7 @@ void a_search_fast::agent_measurement() {
 					{
 						if (test_ck_4(aux_vector) == 0)
 						{
-							state aux_state(aux_vector, critical_data, "measurement");
+							state aux_state(aux_vector, critical_data, "measurement", next_state);
 							temporaryPile.push_back(aux_state); // armazena na fila de prioridad
 						}
 					}
@@ -207,14 +207,14 @@ void a_search_fast::agent_measurement() {
 						convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
 						if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 						{
-							state aux_state(aux_vector, critical_data, "measurement");
+							state aux_state(aux_vector, critical_data, "measurement", next_state);
 							temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 						}
 						else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 						{
 							if (test_ck_4(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
-								state aux_state(aux_vector, critical_data, "measurement");
+								state aux_state(aux_vector, critical_data, "measurement", next_state);
 								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
@@ -304,7 +304,7 @@ void a_search_fast::agent_munit() {
 						{//caso nao encontrado
 							if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
-								state aux_state(aux_vector, critical_data, "munit");
+								state aux_state(aux_vector, critical_data, "munit", next_state);
 								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
@@ -313,14 +313,14 @@ void a_search_fast::agent_munit() {
 							convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
 							if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 							{
-								state aux_state(aux_vector, critical_data, "munit");
+								state aux_state(aux_vector, critical_data, "munit", next_state);
 								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 							else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 							{
 								if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
 								{//caso nao tenha tupla critica
-									state aux_state(aux_vector, critical_data, "munit");
+									state aux_state(aux_vector, critical_data, "munit", next_state);
 									temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 								}
 							}
@@ -343,7 +343,7 @@ void a_search_fast::agent_munit() {
 					{
 						if (test_ck_munit(aux_vector) == 0)
 						{
-							state aux_state(aux_vector, critical_data, "munit");
+							state aux_state(aux_vector, critical_data, "munit", next_state);
 							temporaryPile.push_back(aux_state); // armazena na fila de prioridad
 						}
 					}
@@ -352,14 +352,14 @@ void a_search_fast::agent_munit() {
 						convergenceValue = visited_states.find(hash_key)->second; // verifica a convergencia armazenada
 						if (convergenceValue == 2) // caso seja 2 (2-> observavel nao visitado)
 						{
-							state aux_state(aux_vector, critical_data, "munit");
+							state aux_state(aux_vector, critical_data, "munit", next_state);
 							temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 						}
 						else if (convergenceValue == 3) // caso seja 3 (3-> nao observavel nao visitado)
 						{
 							if (test_ck_munit(aux_vector) == 0) // verifica se contem uma tupla critica
 							{//caso nao tenha tupla critica
-								state aux_state(aux_vector, critical_data, "munit");
+								state aux_state(aux_vector, critical_data, "munit", next_state);
 								temporaryPile.push_back(aux_state); // armazena na fila de prioridade
 							}
 						}
@@ -380,23 +380,23 @@ void a_search_fast::agent_munit() {
 			std::cout << pile[i].get_f() << std::endl;
 		}*/
 		next_state = fast_sort(); // escolhe o a maior heuristica da borda e deleta ela
-		//if (no_of_visited_solutions / 2461.0 >= 1)
-		//{
-		//	std::cout << "100%: " << lopt.size() << std::endl;
-		//	system("pause");
-		//}
-		//else if (no_of_visited_solutions / 2461.0 >= 0.75)
-		//{
-		//	std::cout << "75%: " << lopt.size() << std::endl;
-		//}
-		//else if (no_of_visited_solutions / 2461.0 >= 0.5)
-		//{
-		//	std::cout << "50%: " << lopt.size() << std::endl;
-		//}
-		//else if (no_of_visited_solutions / 2461.0 >= 0.25)
-		//{
-		//	std::cout << "25%: " << lopt.size() << std::endl;
-		//}
+		/*if (no_of_visited_solutions / 2461.0 >= 1)
+		{
+			std::cout << "100%: " << lopt.size() << std::endl;
+			system("pause");
+		}
+		else if (no_of_visited_solutions / 2461.0 >= 0.75)
+		{
+			std::cout << "75%: " << lopt.size() << std::endl;
+		}
+		else if (no_of_visited_solutions / 2461.0 >= 0.5)
+		{
+			std::cout << "50%: " << lopt.size() << std::endl;
+		}
+		else if (no_of_visited_solutions / 2461.0 >= 0.25)
+		{
+			std::cout << "25%: " << lopt.size() << std::endl;
+		}*/
 		/*std::cout << "proxima heuristica: " << next_state.get_f() << std::endl;*/
 		//if (difftime(clock(), tfreememoryBegin) > tmaxFreememory) {
 		//	std::cout << "Clearing memory...";
